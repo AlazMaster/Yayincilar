@@ -1,6 +1,6 @@
 async function isYouTubeLive(channel, username) {
     try {
-        const res = await fetch(`https://yt-live-nr8f44azj-alazmaster.vercel.app/api/check-live?url=${channel}&username=${username}`)
+        const res = await fetch(`https://youtube-stream-checker.vercel.app/api/check-live?url=${channel}&username=${username}`)
         const data = await res.json();
         return data.live;
     } catch (err) {
