@@ -74,8 +74,7 @@
 
   "icerik": [
     { "name": "MuratS10", "platform": "YouTube", "url": "https://www.youtube.com/@MuratS10/" },
-    { "name": "CECECE", "platform": "YouTube", "url": "https://www.youtube.com/@muhsincanofficial" },
-    { "name": "xxWBLAKE", "platform": "YouTube", "url": "https://www.youtube.com/@xxwblake/videos" },
+    { "name": "MuhsinCan", "platform": "YouTube", "url": "https://www.youtube.com/@Muhsincanofficial01/" },
     { "name": "Vulkan Farm", "platform": "YouTube", "url": "https://www.youtube.com/@vulkanfarm" },
     { "name": "OzgurGaming", "platform": "YouTube", "url": "https://www.youtube.com/@OzgurGaming" },
     { "name": "BLackWoLF EGE", "platform": "YouTube", "url": "https://www.youtube.com/@BroEge" },
@@ -84,3 +83,4 @@
     { "name": "W-A-Z-K-A", "platform": "YouTube", "url": "https://www.youtube.com/@WAZKAKnightOnline" }
   ]
 }
+
