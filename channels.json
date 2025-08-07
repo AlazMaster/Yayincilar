@@ -67,7 +67,7 @@
     
   ],
 
-  "icerik": 
+  "icerik": [
     { "name": "MuratS10", "platform": "YouTube", "url": "https://www.youtube.com/@MuratS10/" },
     { "name": "MuhsinCan", "platform": "YouTube", "url": "https://www.youtube.com/@Muhsincanofficial01/" },
     { "name": "Satanic KO", "platform": "YouTube", "url": "https://www.youtube.com/@kosatanic" },
@@ -83,6 +83,7 @@
 
  ]
 }
+
 
 
 
