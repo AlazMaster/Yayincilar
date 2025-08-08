@@ -1,5 +1,6 @@
 {
   "youtube": [
+    { "name": "osman sınav", "platform": "YouTube", "url": "https://www.youtube.com/@911clan-u2p", "channelID": "UCkIJwvZadGww8T-yc1tMRPw" },
     { "name": "PvpAlemi", "platform": "YouTube", "url": "https://www.youtube.com/@PvpAlemi", "channelID": "UCLq_cvgSSrMwbSX1W7cZkvQ" },
     { "name": "MaDxQ", "platform": "YouTube", "url": "https://www.youtube.com/@MaDxQ", "channelID": "UCR8GoZbOqWKUe_hvD-XW7Cg" },
     { "name": "RampagePower32", "platform": "YouTube", "url": "https://www.youtube.com/@rampagepower32", "channelID": "UCuJEcz9RxtR7RrqPaJ-9ffw" },
@@ -10,7 +11,7 @@
     { "name": "poorgod2783", "platform": "YouTube", "url": "https://www.youtube.com/@poorgod2783", "channelID": "UC0NubuJANdnwfBLBz8a00mw" },
     { "name": "imp0sibLe_KURTBEYY", "platform": "YouTube", "url": "https://www.youtube.com/@imp0sibLe_KURTBEYY", "channelID": "UCPoER-ZcwHHx9jVniMlS3oQ" },
     { "name": "BlackRussiaNNN", "platform": "YouTube", "url": "https://www.youtube.com/@BlackRussiaNNN", "channelID": "UCmqRVYDffvLiU_iTpVKc00w" },
-    { "name": "osman sınav", "platform": "YouTube", "url": "https://www.youtube.com/@911clan-u2p", "channelID": "UCkIJwvZadGww8T-yc1tMRPw" },
+    
     { "name": "jenqumoira", "platform": "YouTube", "url": "https://www.youtube.com/@jenqumoira", "channelID": "UC7LW5anbFs9qaTEvaVPjxEQ" },
     { "name": "Nyrexiooon", "platform": "YouTube", "url": "https://www.youtube.com/@Nyrexiooon", "channelID": "UCYnyMcaUfVVc2YCPo7eC7bA" },
     { "name": "Schweppes", "platform": "YouTube", "url": "https://www.youtube.com/@xSchweppes", "channelID": "UClLMJXMt76GVBpE5wpTHexg" },
@@ -83,6 +84,7 @@
 
  ]
 }
+
 
 
 
