@@ -1,6 +1,6 @@
 {
   "youtube": [
-    { "name": "osman sınav", "platform": "YouTube", "url": "https://www.youtube.com/@911clan-u2p", "channelID": "UCkIJwvZadGww8T-yc1tMRPw" },
+    { "name": "911clan-u2p", "platform": "YouTube", "url": "https://www.youtube.com/@911clan-u2p", "channelID": "UCkIJwvZadGww8T-yc1tMRPw" },
     { "name": "PvpAlemi", "platform": "YouTube", "url": "https://www.youtube.com/@PvpAlemi", "channelID": "UCLq_cvgSSrMwbSX1W7cZkvQ" },
     { "name": "MaDxQ", "platform": "YouTube", "url": "https://www.youtube.com/@MaDxQ", "channelID": "UCR8GoZbOqWKUe_hvD-XW7Cg" },
     { "name": "RampagePower32", "platform": "YouTube", "url": "https://www.youtube.com/@rampagepower32", "channelID": "UCuJEcz9RxtR7RrqPaJ-9ffw" },
@@ -84,6 +84,7 @@
 
  ]
 }
+
 
 
 
