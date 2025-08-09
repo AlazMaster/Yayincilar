@@ -27,7 +27,7 @@
     { "name": "TalipHacioglu", "platform": "YouTube", "url": "https://www.youtube.com/@taliphacioglu3773", "channelID": "UCM50y1tHvzG7QlDLa3vbxTg" },
     { "name": "Cabps21", "platform": "YouTube", "url": "https://www.youtube.com/@cabps21", "channelID": "UC-9YNLmwTkJC8GXdt8Dq1sQ" },
     { "name": "Amonamarthh", "platform": "YouTube", "url": "https://www.youtube.com/@amonamarthh", "channelID": "UCrtOwrYbhORXrJxZErk0u5w" }
-  ],
+  ]
 
   "kick": [
     { "name": "Iamlegendko", "platform": "Kick", "url": "https://kick.com/iamlegendko" },
@@ -54,7 +54,7 @@
     { "name": "Xdarkpwange90", "platform": "Kick", "url": "https://kick.com/xdarkpwange90/videos" },
     { "name": "Mass1veJ", "platform": "Kick", "url": "https://kick.com/mass1vej" }
     
-  ],
+  ]
 
   "icerik": [
     { "name": "MuratS10", "platform": "YouTube", "url": "https://www.youtube.com/@MuratS10/" },
@@ -70,6 +70,7 @@
     { "name": "Caner Erkurt", "platform": "YouTube", "url": "https://www.youtube.com/@DSYNCHRONIZED" }
   ]
 }
+
 
 
 
