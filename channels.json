@@ -1,5 +1,6 @@
 {
   "youtube": [
+    { "name": "osman sınav", "platform": "YouTube", "url": "https://www.youtube.com/@911clan-u2p", "channelID": "UCkIJwvZadGww8T-yc1tMRPw" },
     { "name": "911clan-u2p", "platform": "YouTube", "url": "https://www.youtube.com/@911clan-u2p", "channelID": "UCkIJwvZadGww8T-yc1tMRPw" },
     { "name": "PvpAlemi", "platform": "YouTube", "url": "https://www.youtube.com/@PvpAlemi", "channelID": "UCLq_cvgSSrMwbSX1W7cZkvQ" },
     { "name": "MaDxQ", "platform": "YouTube", "url": "https://www.youtube.com/@MaDxQ", "channelID": "UCR8GoZbOqWKUe_hvD-XW7Cg" },
@@ -11,22 +12,28 @@
     { "name": "poorgod2783", "platform": "YouTube", "url": "https://www.youtube.com/@poorgod2783", "channelID": "UC0NubuJANdnwfBLBz8a00mw" },
     { "name": "imp0sibLe_KURTBEYY", "platform": "YouTube", "url": "https://www.youtube.com/@imp0sibLe_KURTBEYY", "channelID": "UCPoER-ZcwHHx9jVniMlS3oQ" },
     { "name": "BlackRussiaNNN", "platform": "YouTube", "url": "https://www.youtube.com/@BlackRussiaNNN", "channelID": "UCmqRVYDffvLiU_iTpVKc00w" },
-    { "name": "Ferdi Düzen", "platform": "YouTube", "url": "https://www.youtube.com/@MrBosshunter", "channelID": "UC9URUvEZicb4Xbe4zxJ_aVQ" },
+
+    { "name": "jenqumoira", "platform": "YouTube", "url": "https://www.youtube.com/@jenqumoira", "channelID": "UC7LW5anbFs9qaTEvaVPjxEQ" },
     { "name": "Nyrexiooon", "platform": "YouTube", "url": "https://www.youtube.com/@Nyrexiooon", "channelID": "UCYnyMcaUfVVc2YCPo7eC7bA" },
     { "name": "Schweppes", "platform": "YouTube", "url": "https://www.youtube.com/@xSchweppes", "channelID": "UClLMJXMt76GVBpE5wpTHexg" },
     { "name": "GTXR-01", "platform": "YouTube", "url": "https://www.youtube.com/@GTXR-01", "channelID": "UCoam6te2RS5yMn3EuUReDUQ" },
     { "name": "user-oz3ky3mi1m", "platform": "YouTube", "url": "https://www.youtube.com/@user-oz3ky3mi1m", "channelID": "UCs1DpXkH2n8XHrqgvFSk84g" },
     { "name": "GwenOnz", "platform": "YouTube", "url": "https://www.youtube.com/@GwenOnz", "channelID": "UCQRdhWX4eGARUCnJxqvakvQ" },
+    { "name": "UmuttCNGL", "platform": "YouTube", "url": "https://www.youtube.com/@UmuttCNGL", "channelID": "UCygont1249EOs3G6C4Gftxw" },
     { "name": "ahmetbedirhancopur4492", "platform": "YouTube", "url": "https://www.youtube.com/@ahmetbedirhancopur4492", "channelID": "UCFcarEjOYKLJlzYk5sAeHDA" },
+    { "name": "salihcimen8406", "platform": "YouTube", "url": "https://www.youtube.com/@salihcimen8406", "channelID": "UCHVy63CklLY9Q4jaaE28EkQ" },
     { "name": "genshiniskoo", "platform": "YouTube", "url": "https://www.youtube.com/@genshiniskoo", "channelID": "UCTaLXpnXRngJsb9hdpvqFEw" },
+    { "name": "luqior2454", "platform": "YouTube", "url": "https://www.youtube.com/@luqior2454", "channelID": "UC0rxkRP--PFTUxQnky8AuMw" },
     { "name": "doganmovefast", "platform": "YouTube", "url": "https://www.youtube.com/@doganmovefast", "channelID": "UC38vPh6tzcnTP947sHg61Tg" },
     { "name": "SSUBZEROO5", "platform": "YouTube", "url": "https://www.youtube.com/@SSUBZEROO5", "channelID": "UCIHBcGUlsceOHTS5-5b6P9A" },
     { "name": "Powerful68100", "platform": "YouTube", "url": "https://www.youtube.com/@Powerful68100", "channelID": "UCv6n7ivRdFHd6u5Fukr5G2A" },
     { "name": "KaragözSevim", "platform": "YouTube", "url": "https://www.youtube.com/@karagözsevim-k9x", "channelID": "UCVDxkzRDeY954K8BAbWZUyg" },
     { "name": "EmreMutlu502", "platform": "YouTube", "url": "https://www.youtube.com/@emremutlu502", "channelID": "UCfPfzFVNUEqGeu0bKecFLrw" },
     { "name": "TalipHacioglu", "platform": "YouTube", "url": "https://www.youtube.com/@taliphacioglu3773", "channelID": "UCM50y1tHvzG7QlDLa3vbxTg" },
+    { "name": "Gurkansayn", "platform": "YouTube", "url": "https://www.youtube.com/@gurkansayn9264", "channelID": "UCPuNSILnY4hMV0G_XAsnKgw" },
     { "name": "Cabps21", "platform": "YouTube", "url": "https://www.youtube.com/@cabps21", "channelID": "UC-9YNLmwTkJC8GXdt8Dq1sQ" },
-    { "name": "Amonamarthh", "platform": "YouTube", "url": "https://www.youtube.com/@amonamarthh", "channelID": "UCrtOwrYbhORXrJxZErk0u5w" }
+    { "name": "Amonamarthh", "platform": "YouTube", "url": "https://www.youtube.com/@amonamarthh", "channelID": "UCrtOwrYbhORXrJxZErk0u5w" },
+    { "name": "SjoH-FurkanBICAK", "platform": "YouTube", "url": "https://www.youtube.com/@SjoH-FurkanBICAK", "channelID": "UCn9CjSXa7RGyRqFzy_QbbbA" }
   ],
 
   "kick": [
@@ -34,26 +41,31 @@
     { "name": "4vn1", "platform": "Kick", "url": "https://kick.com/4vn1" },
     { "name": "MoreBad1", "platform": "Kick", "url": "https://kick.com/morebad1" },
     { "name": "MadxQ", "platform": "Kick", "url": "https://kick.com/madxq" },
-    { "name": "BurakTekeli", "platform": "Kick", "url": "https://kick.com/buraktekeli" },
     { "name": "Uzumakinarutoooooo", "platform": "Kick", "url": "https://kick.com/uzumakinarutoooooo/videos" },
+    { "name": "GaaraXL", "platform": "Kick", "url": "https://kick.com/gaara-xl" },
     { "name": "Aeropawnz", "platform": "Kick", "url": "https://kick.com/aeropawnz" },
     { "name": "4KhawZeinTR", "platform": "Kick", "url": "https://kick.com/4khawzeintr" },
     { "name": "Imuglyy", "platform": "Kick", "url": "https://kick.com/imuglyy" },
     { "name": "Subzero5", "platform": "Kick", "url": "https://kick.com/subzero5/videos" },
+    { "name": "Merulcan", "platform": "Kick", "url": "https://kick.com/merulcan" },
     { "name": "Buzzertv", "platform": "Kick", "url": "https://kick.com/buzzertv" },
     { "name": "Resach", "platform": "Kick", "url": "https://kick.com/resach" },
     { "name": "Mishlawi", "platform": "Kick", "url": "https://kick.com/mishlawi/videos" },
+    { "name": "Grayhatz", "platform": "Kick", "url": "https://kick.com/grayhatz" },
+    { "name": "Papikz", "platform": "Kick", "url": "https://kick.com/papikz" },
     { "name": "2eoff", "platform": "Kick", "url": "https://kick.com/2eoff" },
     { "name": "Xayayorgi35", "platform": "Kick", "url": "https://kick.com/xayayorgi35" },
     { "name": "Yorukoglu", "platform": "Kick", "url": "https://kick.com/yorukoglu" },
+    { "name": "Zarkofff", "platform": "Kick", "url": "https://kick.com/zarkofff" },
     { "name": "Pownzzz", "platform": "Kick", "url": "https://kick.com/pownzzz" },
+    { "name": "Tvbeelex", "platform": "Kick", "url": "https://kick.com/tvbeelex/videos" },
     { "name": "Hakimcannn", "platform": "Kick", "url": "https://kick.com/hakimcannn" },
     { "name": "Buschiger-Zweig", "platform": "Kick", "url": "https://kick.com/buschiger-zweig/videos" },
     { "name": "Ll3keee", "platform": "Kick", "url": "https://kick.com/ll3keee" },
     { "name": "Orcunfurtina", "platform": "Kick", "url": "https://kick.com/orcunfurtina" },
     { "name": "Xdarkpwange90", "platform": "Kick", "url": "https://kick.com/xdarkpwange90/videos" },
     { "name": "Mass1veJ", "platform": "Kick", "url": "https://kick.com/mass1vej" }
-    
+
   ],
 
   "icerik": [
@@ -61,39 +73,15 @@
     { "name": "MuhsinCan", "platform": "YouTube", "url": "https://www.youtube.com/@Muhsincanofficial01/" },
     { "name": "Satanic KO", "platform": "YouTube", "url": "https://www.youtube.com/@kosatanic" },
     { "name": "willpower", "platform": "YouTube", "url": "https://www.youtube.com/@Muhammet_seyit/videos" },
-    { "name": "W-A-Z-K-A", "platform": "YouTube", "url": "https://www.youtube.com/@WAZKAKnightOnline" },
     { "name": "Vulkan Farm", "platform": "YouTube", "url": "https://www.youtube.com/@vulkanfarm" },
     { "name": "RagnarBaskan", "platform": "YouTube", "url": "https://www.youtube.com/@RagnarBaskan" },
     { "name": "OzgurGaming", "platform": "YouTube", "url": "https://www.youtube.com/@OzgurGaming" },
     { "name": "BLackWoLF EGE", "platform": "YouTube", "url": "https://www.youtube.com/@BroEge" },
     { "name": "TÜRKMEN", "platform": "YouTube", "url": "https://www.youtube.com/@turkmenf" },
-    { "name": "Caner Erkurt", "platform": "YouTube", "url": "https://www.youtube.com/@DSYNCHRONIZED" }
-  ],
+    { "name": "Caner Erkurt", "platform": "YouTube", "url": "https://www.youtube.com/@DSYNCHRONIZED" },
+    { "name": "W-A-Z-K-A", "platform": "YouTube", "url": "https://www.youtube.com/@WAZKAKnightOnline" }
+
+
+
+ ]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
