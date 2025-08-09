@@ -78,7 +78,7 @@ h2 {
 }
 
 .live-badge {
-  color: red;
+  color: green;
   font-weight: bold;
   margin-left: 10px;
 }
@@ -99,4 +99,5 @@ h2 {
   object-fit: cover;
   z-index: -1;
   opacity: 0.5; /
+
 }
