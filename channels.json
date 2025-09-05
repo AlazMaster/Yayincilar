@@ -42,7 +42,6 @@
     { "name": "Buzzertv", "platform": "Kick", "url": "https://kick.com/buzzertv" },
     { "name": "Resach", "platform": "Kick", "url": "https://kick.com/resach" },
     { "name": "Mishlawi", "platform": "Kick", "url": "https://kick.com/mishlawi/videos" },
-    { "name": "2eoff", "platform": "Kick", "url": "https://kick.com/2eoff" },
     { "name": "Yorukoglu", "platform": "Kick", "url": "https://kick.com/yorukoglu" },
     { "name": "Pownzzz", "platform": "Kick", "url": "https://kick.com/pownzzz" },
     { "name": "Hakimcannn", "platform": "Kick", "url": "https://kick.com/hakimcannn" },
@@ -68,6 +67,7 @@
     { "name": "Caner Erkurt", "platform": "YouTube", "url": "https://www.youtube.com/@DSYNCHRONIZED" }
   ]
 }
+
 
 
 
