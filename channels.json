@@ -43,7 +43,6 @@
     { "name": "Resach", "platform": "Kick", "url": "https://kick.com/resach" },
     { "name": "Mishlawi", "platform": "Kick", "url": "https://kick.com/mishlawi/videos" },
     { "name": "Yorukoglu", "platform": "Kick", "url": "https://kick.com/yorukoglu" },
-    { "name": "Pownzzz", "platform": "Kick", "url": "https://kick.com/pownzzz" },
     { "name": "Hakimcannn", "platform": "Kick", "url": "https://kick.com/hakimcannn" },
     { "name": "Buschiger-Zweig", "platform": "Kick", "url": "https://kick.com/buschiger-zweig/videos" },
     { "name": "Orcunfurtina", "platform": "Kick", "url": "https://kick.com/orcunfurtina" },
@@ -66,6 +65,7 @@
     { "name": "Caner Erkurt", "platform": "YouTube", "url": "https://www.youtube.com/@DSYNCHRONIZED" }
   ]
 }
+
 
 
 
