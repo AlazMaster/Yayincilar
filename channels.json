@@ -49,7 +49,7 @@
   { "name": "xElektraTV", "platform": "YouTube", "url": "https://www.youtube.com/@xElektraTV", "channelID": "UCoFCl_xAt4XMz0-Ro7Ve2mQ" },
   { "name": "efesknight", "platform": "YouTube", "url": "https://www.youtube.com/@efesknight", "channelID": "UCkzz82jzqgGI8mVSm015gFw" },
   { "name": "ChaosKoSt", "platform": "YouTube", "url": "https://www.youtube.com/@ChaosKoSt", "channelID": "UCYp7rk3gE53P4X_VCN0xP3A" },
-  { "name": "RequimHawk", "platform": "YouTube", "url": "https://www.youtube.com/@RequimHawk", "channelID": "UCQCbtjLmMf-h_HjDvFRot3g" }
+  { "name": "RequimHawk", "platform": "YouTube", "url": "https://www.youtube.com/@RequimHawk", "channelID": "UCQCbtjLmMf-h_HjDvFRot3g" },
 ]
 
   ],
@@ -105,7 +105,7 @@
   { "name": "grayhatz", "platform": "Kick", "url": "https://kick.com/grayhatz" },
   { "name": "esterisback", "platform": "Kick", "url": "https://kick.com/esterisback/videos" },
   { "name": "anaximenes06", "platform": "Kick", "url": "https://kick.com/anaximenes06" },
-  { "name": "torslive", "platform": "Kick", "url": "https://kick.com/torslive" }
+  { "name": "torslive", "platform": "Kick", "url": "https://kick.com/torslive" },
 ]
 
   ],
@@ -124,6 +124,7 @@
     { "name": "Caner Erkurt", "platform": "YouTube", "url": "https://www.youtube.com/@DSYNCHRONIZED" }
   ]
 }
+
 
 
 
