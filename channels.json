@@ -51,8 +51,7 @@
     { "name": "RequimHawk", "platform": "YouTube", "url": "https://www.youtube.com/@RequimHawk", "channelID": "UCQCbtjLmMf-h_HjDvFRot3g" }
   ],
 
-  "kick": [
-    { "name": "SatanicKo", "platform": "Kick", "url": "https://kick.com/satanicko" },
+    "kick": [
     { "name": "shukeko", "platform": "Kick", "url": "https://kick.com/shukeko" },
     { "name": "uzumakinarutoooooo", "platform": "Kick", "url": "https://kick.com/uzumakinarutoooooo" },
     { "name": "merulcan", "platform": "Kick", "url": "https://kick.com/merulcan/videos" },
@@ -64,9 +63,46 @@
     { "name": "xsteinmetz", "platform": "Kick", "url": "https://kick.com/xsteinmetz" },
     { "name": "lordera", "platform": "Kick", "url": "https://kick.com/lordera" },
     { "name": "aveliuss16", "platform": "Kick", "url": "https://kick.com/aveliuss16" },
-    { "name": "aldor1", "platform": "Kick", "url": "https://kick.com/aldor1" },
-    { "name": "evilkingxx", "platform": "Kick", "url": "https://kick.com/evilkingxx" }
+    { "name": "biqqin", "platform": "Kick", "url": "https://kick.com/biqqin" },
+    { "name": "wozniacki", "platform": "Kick", "url": "https://kick.com/wozniacki" },
+    { "name": "itsvolkan", "platform": "Kick", "url": "https://kick.com/itsvolkan" },
+    { "name": "ugur10nline", "platform": "Kick", "url": "https://kick.com/ugur10nline" },
+    { "name": "marvennn", "platform": "Kick", "url": "https://kick.com/marvennn" },
+    { "name": "okielly", "platform": "Kick", "url": "https://kick.com/okielly" },
+    { "name": "imzerofear", "platform": "Kick", "url": "https://kick.com/imzerofear" },
+    { "name": "4revenant", "platform": "Kick", "url": "https://kick.com/4revenant" },
+    { "name": "onizion", "platform": "Kick", "url": "https://kick.com/onizion" },
+    { "name": "zpurpooselessxd", "platform": "Kick", "url": "https://kick.com/zpurpooselessxd" },
+    { "name": "osmanmucho", "platform": "Kick", "url": "https://kick.com/osmanmucho" },
+    { "name": "4dietz", "platform": "Kick", "url": "https://kick.com/4dietz" },
+    { "name": "bexorking35", "platform": "Kick", "url": "https://kick.com/bexorking35" },
+    { "name": "publicagentmeleeclan", "platform": "Kick", "url": "https://kick.com/publicagentmeleeclan/videos" },
+    { "name": "profeusx", "platform": "Kick", "url": "https://kick.com/profeusx" },
+    { "name": "cak94", "platform": "Kick", "url": "https://kick.com/cak94" },
+    { "name": "pierunn", "platform": "Kick", "url": "https://kick.com/pierunn" },
+    { "name": "dxdodge", "platform": "Kick", "url": "https://kick.com/dxdodge" },
+    { "name": "leomefisto", "platform": "Kick", "url": "https://kick.com/leomefisto" },
+    { "name": "xshaaaw", "platform": "Kick", "url": "https://kick.com/xshaaaw" },
+    { "name": "ilyasbayramtr", "platform": "Kick", "url": "https://kick.com/ilyasbayramtr" },
+    { "name": "xcowwboy", "platform": "Kick", "url": "https://kick.com/xcowwboy" },
+    { "name": "yorukoglu", "platform": "Kick", "url": "https://kick.com/yorukoglu" },
+    { "name": "madboa", "platform": "Kick", "url": "https://kick.com/madboa" },
+    { "name": "natasharomanov", "platform": "Kick", "url": "https://kick.com/natasharomanov" },
+    { "name": "lkarasmai", "platform": "Kick", "url": "https://kick.com/lkarasmai" },
+    { "name": "cast1nqfailed", "platform": "Kick", "url": "https://kick.com/cast1nqfailed" },
+    { "name": "blackleke", "platform": "Kick", "url": "https://kick.com/blackleke" },
+    { "name": "bayguna", "platform": "Kick", "url": "https://kick.com/bayguna" },
+    { "name": "juggleer", "platform": "Kick", "url": "https://kick.com/juggleer" },
+    { "name": "chillz59", "platform": "Kick", "url": "https://kick.com/chillz59" },
+    { "name": "kriegsgefangenen", "platform": "Kick", "url": "https://kick.com/kriegsgefangenen" },
+    { "name": "4nostalji", "platform": "Kick", "url": "https://kick.com/4nostalji" },
+    { "name": "xthatpoweeerrr", "platform": "Kick", "url": "https://kick.com/xthatpoweeerrr/videos" },
+    { "name": "grayhatz", "platform": "Kick", "url": "https://kick.com/grayhatz" },
+    { "name": "esterisback", "platform": "Kick", "url": "https://kick.com/esterisback/videos" },
+    { "name": "anaximenes06", "platform": "Kick", "url": "https://kick.com/anaximenes06" },
+    { "name": "torslive", "platform": "Kick", "url": "https://kick.com/torslive" }
   ],
+
 
   "icerik": [
     { "name": "MuratS10", "platform": "YouTube", "url": "https://www.youtube.com/@MuratS10-Official" },
@@ -88,5 +124,6 @@
     
   ]
 }
+
 
 
