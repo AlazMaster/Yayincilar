@@ -106,8 +106,8 @@
 
   "icerik": [
     { "name": "MuratS10", "platform": "YouTube", "url": "https://www.youtube.com/@MuratS10-Official" },
-    { "name": "MuhsinCan", "platform": "YouTube", "url": "https://www.youtube.com/@Muhsincanofficial01/" },
-    { "name": "Satanic KO", "platform": "YouTube", "url": "https://www.youtube.com/@kosatanic" },
+    { "name": "MuhsinCan", "platform": "YouTube", "url": "https://www.youtube.com/@Muhsincanofficial" },
+    { "name": "Satanic KO", "platform": "YouTube", "url": "https://www.youtube.com/@satanicko/" },
     { "name": "W-A-Z-K-A", "platform": "YouTube", "url": "https://www.youtube.com/@WAZKAKnightOnline" },
     { "name": "Vulkan Farm", "platform": "YouTube", "url": "https://www.youtube.com/@vulkanfarm" },
     { "name": "Guven-Ko", "platform": "YouTube", "url": "https://www.youtube.com/@guven-ko" },
@@ -124,6 +124,7 @@
     
   ]
 }
+
 
 
 
