@@ -55,6 +55,8 @@
   ],
 
     "kick": [
+    { "name": "KutluB1lge", "platform": "Kick", "url": "https://kick.com/kutlub1lge" }, 
+    { "name": "xGencYetenek", "platform": "Kick", "url": "https://kick.com/xgencyetenek" },
     { "name": "shukeko", "platform": "Kick", "url": "https://kick.com/shukeko" },
     { "name": "uzumakinarutoooooo", "platform": "Kick", "url": "https://kick.com/uzumakinarutoooooo" },
     { "name": "merulcan", "platform": "Kick", "url": "https://kick.com/merulcan/videos" },
@@ -127,6 +129,7 @@
     
   ]
 }
+
 
 
 
