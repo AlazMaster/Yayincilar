@@ -67,7 +67,6 @@
     { "name": "lordera", "platform": "Kick", "url": "https://kick.com/lordera" },
     { "name": "aveliuss16", "platform": "Kick", "url": "https://kick.com/aveliuss16" },
     { "name": "biqqin", "platform": "Kick", "url": "https://kick.com/biqqin" },
-    { "name": "wozniacki", "platform": "Kick", "url": "https://kick.com/wozniacki" },
     { "name": "itsvolkan", "platform": "Kick", "url": "https://kick.com/itsvolkan" },
     { "name": "ugur10nline", "platform": "Kick", "url": "https://kick.com/ugur10nline" },
     { "name": "okielly", "platform": "Kick", "url": "https://kick.com/okielly" },
@@ -86,7 +85,6 @@
     { "name": "xshaaaw", "platform": "Kick", "url": "https://kick.com/xshaaaw" },
     { "name": "ilyasbayramtr", "platform": "Kick", "url": "https://kick.com/ilyasbayramtr" },
     { "name": "xcowwboy", "platform": "Kick", "url": "https://kick.com/xcowwboy" },
-    { "name": "madboa", "platform": "Kick", "url": "https://kick.com/madboa" },
     { "name": "lkarasmai", "platform": "Kick", "url": "https://kick.com/lkarasmai" },
     { "name": "cast1nqfailed", "platform": "Kick", "url": "https://kick.com/cast1nqfailed" },
     { "name": "blackleke", "platform": "Kick", "url": "https://kick.com/blackleke" },
@@ -123,6 +121,7 @@
     
   ]
 }
+
 
 
 
