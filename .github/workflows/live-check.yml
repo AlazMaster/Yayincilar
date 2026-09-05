@@ -40,6 +40,26 @@ jobs:
           git config user.name "deathko-bot"
           git config user.email "actions@users.noreply.github.com"
           git add status.json data/resolved-ids.json channels.json
-          git diff --cached --quiet || git commit -m "Durum guncellendi [otomatik]"
-          git pull --rebase
-          git push
+          if git diff --cached --quiet; then
+            echo "Degisiklik yok, cikiliyor."
+            exit 0
+          fi
+          git commit -m "Durum guncellendi [otomatik]"
+
+          # Ayni anda calisan baska bir otomasyon turu araya girip push'u
+          # reddedebilir. status.json/channels.json her turda sifirdan
+          # hesaplandigi icin boyle bir cakismada kendi (en taze) halimizi
+          # esas almak guvenli - birkac saniye icinde tekrar deneriz.
+          for i in 1 2 3 4 5; do
+            git fetch origin main
+            if git rebase origin/main -X ours && git push origin HEAD:main; then
+              echo "Push basarili (deneme $i)."
+              exit 0
+            fi
+            echo "Push basarisiz oldu (deneme $i), tekrar denenecek."
+            git rebase --abort || true
+            sleep $((RANDOM % 6 + 2))
+          done
+
+          echo "Push birkac denemeden sonra basarisiz oldu."
+          exit 1
