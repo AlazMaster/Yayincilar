@@ -27,6 +27,11 @@ const KICK_DELAY_MS = 500; // Kick isteklerini birbirinden ayır (nazik davran)
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
+// GEÇİCİ TEŞHİS: YouTube avatarı neden bulunamıyor anlayana kadar, ilk birkaç
+// kanal için gerçek sayfa yapısını loglara yazıyoruz. Sorun çözülünce bu blok
+// (ve aşağıdaki log çağrısı) kaldırılacak.
+let avatarDebugRemaining = 3;
+
 function log(...args) {
   console.log(new Date().toISOString(), ...args);
 }
@@ -151,8 +156,10 @@ async function checkYouTubeLive(channelId) {
     //   normal (takip eden) bir istekle gidip gerçek sayfayı çekiyoruz.
     let avatar = null;
     if (!parsed.live) {
+      let html = "";
+      let debugStatus = res.status;
+      let debugUrl = `https://www.youtube.com/channel/${channelId}/live`;
       try {
-        let html;
         if (res.status >= 300 && res.status < 400) {
           const location = res.headers.get("location");
           const target = location
@@ -160,12 +167,29 @@ async function checkYouTubeLive(channelId) {
             : `https://www.youtube.com/channel/${channelId}`;
           const res2 = await fetchWithTimeout(target);
           html = await res2.text();
+          debugStatus = res2.status;
+          debugUrl = target;
         } else {
           html = await res.text();
         }
         avatar = parseChannelAvatar(html);
       } catch {
         // avatar bulunamazsa sessizce geç, canlı/video durumunu etkilemesin
+      }
+
+      if (!avatar && avatarDebugRemaining > 0) {
+        avatarDebugRemaining--;
+        const idx = html.indexOf("avatar");
+        const around = idx >= 0 ? html.slice(Math.max(0, idx - 40), idx + 160) : null;
+        log(
+          `[avatar-debug] channelId=${channelId} url=${debugUrl} status=${debugStatus} htmlLen=${html.length}`
+        );
+        log(`[avatar-debug] ilk 300 karakter: ${JSON.stringify(html.slice(0, 300))}`);
+        if (around) {
+          log(`[avatar-debug] "avatar" kelimesinin etrafı: ${JSON.stringify(around)}`);
+        } else {
+          log(`[avatar-debug] gövdede "avatar" kelimesi hiç geçmiyor`);
+        }
       }
     }
     return { ...parsed, avatar };
