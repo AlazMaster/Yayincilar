@@ -1,107 +1,38 @@
+/* ===== #DeathKO — Prime XL — oyuncu topluluğu teması =====
+   İlke: koyu, düz (cam/blur yok) paneller; TEK güçlü vurgu rengi (kırmızı) ve
+   TEK soğuk ikinci renk (camgöbeği) — enerji vurgudan gelsin, dekorasyondan
+   değil. Yapı, ilk sayfadaki gibi sade: 3 sütun, düz başlıklar. */
+
+:root {
+  --bg: #08080a;
+  --panel-bg: #100f12;
+  --ink: #f2f1f4;
+  --ink-muted: #8d8b96;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --accent: #ff3b3b;      /* canlı vurgu — "Death" kırmızısı */
+  --accent-dim: rgba(255, 59, 59, 0.16);
+  --new: #35d7ff;         /* yeni video — soğuk camgöbeği */
+  --new-dim: rgba(53, 215, 255, 0.14);
+  --sponsor: #f0b429;     /* sadece sponsor bölümünde kullanılan altın ton */
+  --sponsor-dim: rgba(240, 180, 41, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: #111;
-  color: #fff;
-  font-family: 'Orbitron', sans-serif; /* Arial yerine Orbitron */
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: 'Rajdhani', 'Inter', sans-serif;
+  font-weight: 500;
   margin: 0;
   padding: 0;
-}
-
-.logo-bar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  background-color: #222;
-  padding: 10px;
-  flex-wrap: wrap;
-  text-align: center; /* Add this for center alignment of the links */
-}
-
-.logo-bar img {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-  transition: transform 0.3s ease;
-}
-
-.logo-bar img:hover {
-  transform: scale(1.1);
-}
-
-h1 {
-  text-align: center;
-  margin: 20px 0;
-}
-
-.streamers-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  padding: 20px;
-}
-
-.youtube-column, .kick-column, .icerik-column {
-  flex: 1;
-  min-width: 300px;
-  max-width: 600px;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #444;
-  padding-bottom: 5px;
-}
-
-.channel-card {
-  background: #22222281;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 80%;
-  position: relative; /* new-video-badge'in konumlanması için */
-}
-
-.channel-card img {
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-}
-
-.channel-card a {
-  color: #0af;
-  text-decoration: none;
-}
-
-.live-badge {
-  color: red;
-  font-weight: bold;
-  margin-left: 10px;
-}
-
-.new-video-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #43a047;
-  color: #fff;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 3px 8px;
-  border-radius: 999px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  white-space: nowrap;
-}
-
-.platform-logo {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-  border-radius: 8px;
+  overflow-x: hidden;
 }
 
 #bg-video {
@@ -111,6 +42,439 @@ h2 {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
-  z-index: -1;
-  opacity: 0.5;
+  z-index: -2;
+  opacity: 0.05;
+}
+
+/* ===== Üst bar ===== */
+
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 5vw;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.wordmark {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+.wordmark-accent {
+  color: var(--accent);
+}
+
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.social-links img {
+  height: 36px;
+  width: 36px;
+  object-fit: contain;
+  filter: none;
+  opacity: 1;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.social-links a:hover {
+  transform: translateY(-3px);
+}
+
+.social-links a:hover img {
+  filter: drop-shadow(0 4px 10px rgba(255, 59, 59, 0.45));
+}
+
+/* ===== Hero ===== */
+
+.hero {
+  position: relative;
+  padding: 88px 20px 64px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -180px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 720px;
+  height: 420px;
+  background: radial-gradient(ellipse at center, rgba(255, 59, 59, 0.24), transparent 68%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  position: relative;
+  margin: 0;
+  color: var(--ink-muted);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hero-title {
+  position: relative;
+  margin: 14px 0 0;
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(38px, 7vw, 68px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.hero-title-accent {
+  color: var(--accent);
+  text-shadow: 0 0 28px rgba(255, 59, 59, 0.55);
+}
+
+.hero-rule {
+  position: relative;
+  width: 88px;
+  height: 3px;
+  margin: 26px auto 18px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.hero-meta {
+  position: relative;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+/* ===== Sponsor içerik üreticileri (varsa gösterilir) ===== */
+
+main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 5vw 100px;
+}
+
+.sponsor-section {
+  margin: 8px 0 44px;
+}
+
+.sponsor-heading {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 16px;
+  padding: 0 0 12px;
+  border-bottom: 2px solid var(--sponsor);
+}
+
+.sponsor-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sponsor-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 10px 12px;
+  background: var(--panel-bg);
+  border: 1px solid rgba(240, 180, 41, 0.32);
+  border-radius: 12px;
+}
+
+.sponsor-card.is-live {
+  border-color: var(--accent);
+}
+
+.sponsor-card .avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  filter: none;
+  opacity: 1;
+}
+
+.sponsor-card .roster-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sponsor-card .roster-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.sponsor-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--sponsor-dim);
+  color: var(--sponsor);
+}
+
+.sponsor-card .roster-link {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.sponsor-card .roster-link:hover {
+  color: var(--sponsor);
+}
+
+.live-pill-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 52px;
+}
+
+.live-pill {
+  position: relative;
+  margin: 0;
+  padding: 9px 22px 9px 34px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+}
+
+.live-pill::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-muted);
+}
+
+.live-pill.has-live {
+  color: var(--accent);
+  border-color: rgba(255, 59, 59, 0.35);
+}
+
+.live-pill.has-live::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 0 rgba(255, 59, 59, 0.6);
+  animation: pulse-dot 1.8s ease-out infinite;
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(255, 59, 59, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 59, 59, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 59, 59, 0); }
+}
+
+/* ===== Yayıncı listeleri ===== */
+
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.roster-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 4px 22px 16px;
+  min-width: 0;
+}
+
+h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 4px;
+  padding: 20px 0 14px;
+  border-bottom: 2px solid var(--accent);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.roster-count {
+  font-family: 'Rajdhani', sans-serif;
+  text-transform: none;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+
+.roster-list {
+  padding-top: 4px;
+}
+
+.roster-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 8px;
+  transition: background 0.2s ease, padding 0.2s ease;
+}
+
+.roster-row:last-child {
+  border-bottom: none;
+}
+
+.roster-row.is-live {
+  background: linear-gradient(90deg, var(--accent-dim), transparent 75%);
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: -10px;
+  margin-right: -10px;
+  border-left: 2px solid var(--accent);
+}
+
+.roster-row .avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  filter: grayscale(1) brightness(1.25);
+  opacity: 0.7;
+  transition: filter 0.25s ease, opacity 0.25s ease;
+}
+
+.roster-row:hover .avatar {
+  filter: none;
+  opacity: 1;
+}
+
+.roster-row.is-live .avatar {
+  filter: none;
+  opacity: 1;
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+
+.roster-main {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.roster-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roster-status {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.roster-status.roster-status--new {
+  background: var(--new-dim);
+  color: var(--new);
+}
+
+.roster-link {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.roster-link:hover {
+  color: var(--accent);
+}
+
+/* ===== Alt bilgi ===== */
+
+.site-footer {
+  text-align: center;
+  padding: 30px 20px 56px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+/* ===== Mobil uyum ===== */
+
+@media (max-width: 900px) {
+  .roster-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .hero {
+    padding: 64px 20px 48px;
+  }
+}
+
+@media (max-width: 560px) {
+  .masthead {
+    justify-content: center;
+    text-align: center;
+  }
+  .live-pill-wrap {
+    margin: 0 0 40px;
+  }
 }

@@ -1,6 +1,6 @@
-// #DeathKO Yayıncılar sayfası
+// #DeathKO Prime XL — Yayıncılar sayfası
 //
-// ÖNEMLİ DEĞİŞİKLİK: Bu sürüm artık Kick/YouTube'a tarayıcıdan DOĞRUDAN istek atmıyor.
+// Bu script artık Kick/YouTube'a tarayıcıdan DOĞRUDAN istek atmıyor.
 // Bunun yerine, arka planda GitHub Actions tarafından ~5 dakikada bir güncellenen
 // status.json dosyasını okuyor. Bu sayede:
 //  - Ziyaretçi sayısı arttıkça Kick/YouTube'a giden istek sayısı ARTMIYOR (herkes aynı
@@ -18,17 +18,22 @@ async function loadJson(url) {
   return res.json();
 }
 
-function createCard(channel, status, platform) {
-  const card = document.createElement("div");
-  card.className = "channel-card";
+function createRow(channel, status, platform) {
+  const row = document.createElement("div");
+  row.className = "roster-row";
 
-  let logo = "default.png";
-  if (platform === "kick") logo = "kk.png";
-  else if (platform === "youtube") logo = "yt.png";
-  else if (platform === "icerik") logo = "yt.png";
+  let logo = "default.svg";
+  if (platform === "kick") logo = "kk.svg";
+  else if (platform === "youtube") logo = "yt.svg";
+  else if (platform === "icerik") logo = "yt.svg";
+
+  // Gerçek kanal fotoğrafı varsa onu göster; yoksa (henüz çekilememiş veya
+  // yüklenemezse) platform ikonuna düş.
+  const avatarSrc = status?.avatar || logo;
 
   const isLive = !!status?.live;
   const isNewVideo = !isLive && !!status?.newVideo; // aynı anda ikisini birden göstermeye gerek yok
+  if (isLive) row.classList.add("is-live");
 
   // channelId kalıcıdır (biri YouTube @handle'ını değiştirse bile aynı kalır).
   // Elimizde varsa linki ondan üretiyoruz ki channels.json'daki url eskiyince
@@ -37,20 +42,74 @@ function createCard(channel, status, platform) {
     ? `https://www.youtube.com/channel/${status.channelId}`
     : channel.url;
 
-  card.innerHTML = `
-    ${isNewVideo ? '<span class="new-video-badge">🎬 Yeni Video</span>' : ""}
-    <img class="platform-logo" src="${logo}" alt="${platform}">
-    <div>
-      <strong>${channel.name}</strong>
-      ${isLive ? '<span class="live-badge">🔴 Live</span>' : ""}
-      <br>
-      <a href="${watchUrl}" target="_blank" rel="noopener">Tıkla İzle</a>
+  let statusHtml = "";
+  if (isLive) statusHtml = '<span class="roster-status">Canlı</span>';
+  else if (isNewVideo) statusHtml = '<span class="roster-status roster-status--new">Yeni video</span>';
+
+  row.innerHTML = `
+    <img class="avatar" src="${avatarSrc}" data-fallback="${logo}" onerror="this.onerror=null;this.src=this.dataset.fallback;" alt="">
+    <div class="roster-main">
+      <span class="roster-name">${channel.name}</span>
+      ${statusHtml}
     </div>
+    <a class="roster-link" href="${watchUrl}" target="_blank" rel="noopener">İzle</a>
+  `;
+  return row;
+}
+
+function createSponsorCard(channel, status, platform) {
+  const card = document.createElement("div");
+  card.className = "sponsor-card";
+
+  let logo = "default.svg";
+  if (platform === "kick") logo = "kk.svg";
+  else if (platform === "youtube") logo = "yt.svg";
+  else if (platform === "icerik") logo = "yt.svg";
+
+  const avatarSrc = status?.avatar || logo;
+  const isLive = !!status?.live;
+  const isNewVideo = !isLive && !!status?.newVideo;
+  if (isLive) card.classList.add("is-live");
+
+  const watchUrl = status?.channelId
+    ? `https://www.youtube.com/channel/${status.channelId}`
+    : channel.url;
+
+  let statusHtml = "";
+  if (isLive) statusHtml = '<span class="roster-status">Canlı</span>';
+  else if (isNewVideo) statusHtml = '<span class="roster-status roster-status--new">Yeni video</span>';
+
+  card.innerHTML = `
+    <img class="avatar" src="${avatarSrc}" data-fallback="${logo}" onerror="this.onerror=null;this.src=this.dataset.fallback;" alt="">
+    <div class="roster-main">
+      <span class="roster-name">${channel.name}</span>
+      <span class="sponsor-tag">Sponsor</span>
+      ${statusHtml}
+    </div>
+    <a class="roster-link" href="${watchUrl}" target="_blank" rel="noopener">İzle</a>
   `;
   return card;
 }
 
-function renderColumn(listEl, channels, platform) {
+function renderSponsors() {
+  const section = document.getElementById("sponsor-section");
+  const listEl = document.getElementById("sponsor-list");
+  if (!section || !listEl) return;
+
+  const grouped = [
+    ...(channelsData?.youtube || []).map((c) => ({ channel: c, platform: "youtube" })),
+    ...(channelsData?.kick || []).map((c) => ({ channel: c, platform: "kick" })),
+    ...(channelsData?.icerik || []).map((c) => ({ channel: c, platform: "icerik" })),
+  ].filter((c) => c.channel.sponsor === true);
+
+  listEl.innerHTML = "";
+  for (const { channel, platform } of grouped) {
+    listEl.appendChild(createSponsorCard(channel, statusData[channel.url], platform));
+  }
+  section.hidden = grouped.length === 0;
+}
+
+function renderColumn(listEl, countEl, channels, platform) {
   listEl.innerHTML = "";
   const withStatus = channels.map((c) => ({ channel: c, status: statusData[c.url] }));
 
@@ -61,15 +120,57 @@ function renderColumn(listEl, channels, platform) {
   ];
 
   for (const { channel, status } of ordered) {
-    listEl.appendChild(createCard(channel, status, platform));
+    listEl.appendChild(createRow(channel, status, platform));
+  }
+  if (countEl) countEl.textContent = `(${channels.length})`;
+}
+
+function updateLiveLine() {
+  const allChannels = [
+    ...(channelsData?.youtube || []),
+    ...(channelsData?.kick || []),
+    ...(channelsData?.icerik || []),
+  ];
+  let liveCount = 0;
+  for (const c of allChannels) {
+    if (statusData[c.url]?.live) liveCount++;
+  }
+  const el = document.getElementById("live-line");
+  if (!el) return;
+  if (liveCount === 0) {
+    el.textContent = "Şu an canlı yayın yok.";
+    el.classList.remove("has-live");
+  } else if (liveCount === 1) {
+    el.textContent = "Şu an 1 yayıncı canlı.";
+    el.classList.add("has-live");
+  } else {
+    el.textContent = `Şu an ${liveCount} yayıncı canlı.`;
+    el.classList.add("has-live");
   }
 }
 
 function renderAll() {
   if (!channelsData) return;
-  renderColumn(document.querySelector(".youtube-list"), channelsData.youtube || [], "youtube");
-  renderColumn(document.querySelector(".kick-list"), channelsData.kick || [], "kick");
-  renderColumn(document.querySelector(".icerik-list"), channelsData.icerik || [], "icerik");
+  renderSponsors();
+  renderColumn(
+    document.querySelector(".youtube-list"),
+    document.getElementById("count-youtube"),
+    channelsData.youtube || [],
+    "youtube"
+  );
+  renderColumn(
+    document.querySelector(".kick-list"),
+    document.getElementById("count-kick"),
+    channelsData.kick || [],
+    "kick"
+  );
+  renderColumn(
+    document.querySelector(".icerik-list"),
+    document.getElementById("count-icerik"),
+    channelsData.icerik || [],
+    "icerik"
+  );
+  updateLiveLine();
 }
 
 async function refreshStatus() {

@@ -3,40 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
-  <title>#DeathKO</title>
+  <meta name="description" content="#DeathKO Prime XL (v1098) yayıncıları ve içerik üreticileri." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>#DeathKO — Prime XL</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <video autoplay muted loop id="bg-video">
-      <source src="bg.mp4" type="video/mp4" />
-    </video>
-    <div class="logo-bar">
-      <a href="https://discord.gg/DeathKO" target="_blank"><img src="dc.png" alt="Discord"></a>
-      <a href="https://www.whatsapp.com/channel/0029VaD8QnzK5cDI5Vjxt22J" target="_blank"><img src="wa.png" alt="WhatsApp"></a>
-      <a href="https://www.facebook.com/Thedeathko2019" target="_blank"><img src="fb.png" alt="Facebook"></a>
-      <a href="https://www.instagram.com/the.deathko/" target="_blank"><img src="insta.png" alt="Instagram"></a>
-      <a href="https://www.youtube.com/@TheDeathKO/" target="_blank"><img src="yt.png" alt="YouTube"></a>
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="bg.mp4" type="video/mp4" />
+  </video>
+
+  <header class="masthead">
+    <span class="wordmark">Death<span class="wordmark-accent">KO</span></span>
+    <nav class="social-links">
+      <a href="https://discord.gg/DeathKO" target="_blank" rel="noopener" aria-label="Discord"><img src="dc.svg" alt=""></a>
+      <a href="https://www.whatsapp.com/channel/0029VaD8QnzK5cDI5Vjxt22J" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="wa.svg" alt=""></a>
+      <a href="https://www.facebook.com/Thedeathko2019" target="_blank" rel="noopener" aria-label="Facebook"><img src="fb.svg" alt=""></a>
+      <a href="https://www.instagram.com/the.deathko/" target="_blank" rel="noopener" aria-label="Instagram"><img src="insta.svg" alt=""></a>
+      <a href="https://x.com/xTheDeathKO" target="_blank" rel="noopener" aria-label="X (Twitter)"><img src="x.svg" alt=""></a>
+      <a href="https://www.youtube.com/@TheDeathKO/" target="_blank" rel="noopener" aria-label="YouTube"><img src="yt.svg" alt=""></a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">Sezon v1098</p>
+    <h1 class="hero-title">PRIME<span class="hero-title-accent">XL</span></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-meta">25 Eylül 2026</p>
+  </section>
+
+  <main>
+    <section class="sponsor-section" id="sponsor-section" hidden>
+      <h2 class="sponsor-heading">Sponsor İçerik Üreticileri</h2>
+      <div class="sponsor-list" id="sponsor-list"></div>
+    </section>
+
+    <div class="live-pill-wrap">
+      <p class="live-pill" id="live-line">Şu an canlı yayın yok.</p>
     </div>
 
-    <h1>#TheDeathKO Yayıncıları</h1>
-    
-    <div class="streamers-container">
-        <div class="youtube-column">
-            <h2>YouTube Yayıncıları</h2>
-            <div class="youtube-list"></div>
-        </div>
-        <div class="kick-column">
-            <h2>Kick Yayıncıları</h2>
-            <div class="kick-list"></div>
-        </div>
-        <div class="icerik-column">
-            <h2>İçerik Üreticilerimiz</h2>
-            <div class="icerik-list"></div>
-        </div>
+    <div class="roster-grid">
+      <section class="roster-card">
+        <h2>YouTube <span class="roster-count" id="count-youtube"></span></h2>
+        <div class="roster-list youtube-list"></div>
+      </section>
+      <section class="roster-card">
+        <h2>Kick <span class="roster-count" id="count-kick"></span></h2>
+        <div class="roster-list kick-list"></div>
+      </section>
+      <section class="roster-card">
+        <h2>İçerik Üreticileri <span class="roster-count" id="count-icerik"></span></h2>
+        <div class="roster-list icerik-list"></div>
+      </section>
     </div>
+  </main>
 
-    <script src="script.js"></script>
+  <footer class="site-footer">
+    <p>#DeathKO — Prime XL v1098 — 25 Eylül 2026</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
