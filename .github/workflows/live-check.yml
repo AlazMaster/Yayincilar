@@ -1,0 +1,40 @@
+name: Canli Yayin ve Yeni Video Takibi
+
+"on":
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Repoyu indir
+        uses: actions/checkout@v4
+
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Durumu kontrol et
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: node scripts/check-status.mjs
+
+      - name: Degisiklik varsa commit'le ve gonder
+        run: |
+          git config user.name "deathko-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add status.json data/resolved-ids.json
+          git diff --cached --quiet || git commit -m "Durum guncellendi [otomatik]"
+          git pull --rebase
+          git push
