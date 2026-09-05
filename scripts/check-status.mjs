@@ -142,7 +142,21 @@ async function checkYouTubeLive(channelId) {
       `https://www.youtube.com/channel/${channelId}/live`,
       { redirect: "manual" }
     );
-    return parseLiveRedirect(res.status, res.headers.get("location") || "");
+    const parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
+    // Canlı değilse bu isteğin gövdesi zaten kanalın kendi sayfası -> profil
+    // fotoğrafını (avatar) da buradan, EK bir istek atmadan çıkarabiliyoruz.
+    // Canlıysa gövde yönlendirme sayfasıdır, avatar bilgisi taşımaz; o durumda
+    // avatar null döner ve status.json'daki önceki değer korunur.
+    let avatar = null;
+    if (!parsed.live) {
+      try {
+        const html = await res.text();
+        avatar = parseChannelAvatar(html);
+      } catch {
+        // avatar bulunamazsa sessizce geç, canlı/video durumunu etkilemesin
+      }
+    }
+    return { ...parsed, avatar };
   } catch (err) {
     log(`[youtube] live kontrolü başarısız (${channelId}):`, err.message);
     return null; // bilinmiyor -> önceki durumu koru
@@ -156,6 +170,15 @@ export function parseLiveRedirect(status, location) {
     return { live: true, videoId };
   }
   return { live: false, videoId: null };
+}
+
+// Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
+export function parseChannelAvatar(html) {
+  if (!html) return null;
+  const m =
+    html.match(/<meta property="og:image" content="([^"]+)"/) ||
+    html.match(/<link itemprop="thumbnailUrl" href="([^"]+)"/);
+  return m ? decodeEntities(m[1]) : null;
 }
 
 export function extractKickUsername(url) {
@@ -174,14 +197,17 @@ async function checkKickLive(username) {
     });
     if (!res.ok) return null; // engellenmiş/oran sınırlı olabilir -> bilinmiyor
     const data = await res.json();
+    // Kick'in kanal cevabı zaten profil fotoğrafını içeriyor -> ekstra istek gerekmiyor.
+    const avatar = data?.user?.profile_pic || data?.user?.profilePic || null;
     if (data && data.livestream) {
       return {
         live: true,
         title: data.livestream.session_title || "",
         thumbnail: data.livestream.thumbnail?.url || null,
+        avatar,
       };
     }
-    return { live: false, title: "", thumbnail: null };
+    return { live: false, title: "", thumbnail: null, avatar };
   } catch (err) {
     log(`[kick] kontrol başarısız (${username}):`, err.message);
     return null;
@@ -247,6 +273,7 @@ async function processYouTubeEntry(entry, cache) {
     videoUrl: latest?.url || null,
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
+    avatar: liveInfo?.avatar || null,
   };
 }
 
@@ -262,6 +289,7 @@ async function processKickEntry(entry, index) {
     live: info ? info.live : undefined,
     videoTitle: info?.title || null,
     thumbnail: info?.thumbnail || null,
+    avatar: info?.avatar || null,
   };
 }
 
@@ -306,6 +334,10 @@ async function main() {
       videoTitle: r.videoTitle ?? before?.videoTitle ?? null,
       videoUrl: r.videoUrl ?? before?.videoUrl ?? null,
       thumbnail: r.thumbnail ?? before?.thumbnail ?? null,
+      // avatar nadiren değişir; bu turda bulunamadıysa (ör. kanal o an canlıydı)
+      // önceki bilinen avatarı koruyoruz, hiç bulunamadıysa null kalır (site
+      // platform ikonuna geri düşer).
+      avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
     };
 
