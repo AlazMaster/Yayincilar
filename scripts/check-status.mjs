@@ -143,14 +143,26 @@ async function checkYouTubeLive(channelId) {
       { redirect: "manual" }
     );
     const parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
-    // Canlı değilse bu isteğin gövdesi zaten kanalın kendi sayfası -> profil
-    // fotoğrafını (avatar) da buradan, EK bir istek atmadan çıkarabiliyoruz.
-    // Canlıysa gövde yönlendirme sayfasıdır, avatar bilgisi taşımaz; o durumda
-    // avatar null döner ve status.json'daki önceki değer korunur.
+    // Canlı değilse profil fotoğrafını (avatar) da EK bir istek atmadan çıkarmaya
+    // çalışıyoruz. Ama bu isteğin gövdesi her zaman kanalın kendi sayfası olmayabilir:
+    // - Durum 200 ise gövde zaten kanal sayfasıdır, doğrudan kullanılır.
+    // - Durum 3xx ama hedef bir video (watch?v=) değilse (örn. kanalın ana sayfasına
+    //   yönlendirme), "manual" modda gövde boş gelir; bu durumda hedefe ayrıca,
+    //   normal (takip eden) bir istekle gidip gerçek sayfayı çekiyoruz.
     let avatar = null;
     if (!parsed.live) {
       try {
-        const html = await res.text();
+        let html;
+        if (res.status >= 300 && res.status < 400) {
+          const location = res.headers.get("location");
+          const target = location
+            ? new URL(location, "https://www.youtube.com").toString()
+            : `https://www.youtube.com/channel/${channelId}`;
+          const res2 = await fetchWithTimeout(target);
+          html = await res2.text();
+        } else {
+          html = await res.text();
+        }
         avatar = parseChannelAvatar(html);
       } catch {
         // avatar bulunamazsa sessizce geç, canlı/video durumunu etkilemesin
@@ -173,12 +185,23 @@ export function parseLiveRedirect(status, location) {
 }
 
 // Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
+//
+// YouTube kanal fotoğrafını sayfada birden fazla olası biçimde taşıyabiliyor:
+// klasik <meta>/<link> etiketleri her zaman bulunmayabiliyor (özellikle
+// JavaScript ile doldurulan bazı sayfa varyantlarında), o yüzden sayfanın
+// içine gömülü ilk yükleme JSON'undaki alanları da yedek olarak deniyoruz.
 export function parseChannelAvatar(html) {
   if (!html) return null;
-  const m =
-    html.match(/<meta property="og:image" content="([^"]+)"/) ||
-    html.match(/<link itemprop="thumbnailUrl" href="([^"]+)"/);
-  return m ? decodeEntities(m[1]) : null;
+  const patterns = [
+    /<meta property="og:image" content="([^"]+)"/,
+    /<link itemprop="thumbnailUrl" href="([^"]+)"/,
+    /"avatar":\{"thumbnails":\[\{"url":"([^"]+)"/,
+  ];
+  for (const re of patterns) {
+    const m = html.match(re);
+    if (m) return decodeEntities(m[1]);
+  }
+  return null;
 }
 
 export function extractKickUsername(url) {
