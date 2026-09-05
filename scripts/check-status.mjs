@@ -299,6 +299,9 @@ async function main() {
       name: r.name,
       live,
       newVideo,
+      // channelId kalıcıdır (biri @handle'ını değiştirse bile aynı kalır) -> kartın
+      // linkini bundan üretiyoruz ki eski/geçersiz bir url'e takılıp kalmasın.
+      channelId: r.channelId ?? before?.channelId ?? null,
       videoId: r.videoId ?? before?.videoId ?? null,
       videoTitle: r.videoTitle ?? before?.videoTitle ?? null,
       videoUrl: r.videoUrl ?? before?.videoUrl ?? null,
