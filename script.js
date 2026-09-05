@@ -32,7 +32,9 @@ function createRow(channel, status, platform) {
   const avatarSrc = status?.avatar || logo;
 
   const isLive = !!status?.live;
-  const isNewVideo = !isLive && !!status?.newVideo; // aynı anda ikisini birden göstermeye gerek yok
+  // "Yeni video" rozeti sadece İçerik Üreticileri için anlamlı; Yayıncılar
+  // (YouTube/Kick) zaten canlı yayın yapıyor, video yükleme onların işi değil.
+  const isNewVideo = !isLive && !!status?.newVideo && platform === "icerik";
   if (isLive) row.classList.add("is-live");
 
   // channelId kalıcıdır (biri YouTube @handle'ını değiştirse bile aynı kalır).
@@ -68,7 +70,8 @@ function createSponsorCard(channel, status, platform) {
 
   const avatarSrc = status?.avatar || logo;
   const isLive = !!status?.live;
-  const isNewVideo = !isLive && !!status?.newVideo;
+  // Aynı mantık: "Yeni video" rozeti sadece İçerik Üreticileri için.
+  const isNewVideo = !isLive && !!status?.newVideo && platform === "icerik";
   if (isLive) card.classList.add("is-live");
 
   const watchUrl = status?.channelId
