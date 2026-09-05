@@ -30,6 +30,13 @@ function createCard(channel, status, platform) {
   const isLive = !!status?.live;
   const isNewVideo = !isLive && !!status?.newVideo; // aynı anda ikisini birden göstermeye gerek yok
 
+  // channelId kalıcıdır (biri YouTube @handle'ını değiştirse bile aynı kalır).
+  // Elimizde varsa linki ondan üretiyoruz ki channels.json'daki url eskiyince
+  // "sayfa bulunamadı" sorunu çıkmasın; yoksa channels.json'daki url'e düşüyoruz.
+  const watchUrl = status?.channelId
+    ? `https://www.youtube.com/channel/${status.channelId}`
+    : channel.url;
+
   card.innerHTML = `
     ${isNewVideo ? '<span class="new-video-badge">🎬 Yeni Video</span>' : ""}
     <img class="platform-logo" src="${logo}" alt="${platform}">
@@ -37,7 +44,7 @@ function createCard(channel, status, platform) {
       <strong>${channel.name}</strong>
       ${isLive ? '<span class="live-badge">🔴 Live</span>' : ""}
       <br>
-      <a href="${channel.url}" target="_blank" rel="noopener">Tıkla İzle</a>
+      <a href="${watchUrl}" target="_blank" rel="noopener">Tıkla İzle</a>
     </div>
   `;
   return card;
