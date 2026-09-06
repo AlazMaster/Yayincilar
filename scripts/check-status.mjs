@@ -153,6 +153,12 @@ export function parseLatestVideoFromXml(xml) {
   };
 }
 
+// GEÇİCİ TEŞHİS: Mukmir'in YouTube'da canlı olduğu bildirildiği halde
+// live:false görünmesi sorununu araştırmak için, tek bir kanal için ham
+// HTTP durumunu/yönlendirmeyi status.json'a yazıyoruz. Sorun çözülünce
+// bu blok (ve _liveDebug alanı main()'de) kaldırılacak.
+const DEBUG_LIVE_CHANNEL_ID = "UC2IhlhOhWkA8t_eLBmFVK-w";
+
 async function checkYouTubeLive(channelId) {
   try {
     const res = await fetchWithTimeout(
@@ -160,6 +166,7 @@ async function checkYouTubeLive(channelId) {
       { redirect: "manual" }
     );
     const parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
+    let debug = null;
     // Canlı değilse profil fotoğrafını (avatar) da EK bir istek atmadan çıkarmaya
     // çalışıyoruz. Ama bu isteğin gövdesi her zaman kanalın kendi sayfası olmayabilir:
     // - Durum 200 ise gövde zaten kanal sayfasıdır, doğrudan kullanılır.
@@ -184,8 +191,27 @@ async function checkYouTubeLive(channelId) {
       } catch {
         // gövde okunamadı -> avatar bulunamadı sayılır, script çökmez
       }
+
+      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
+        debug = {
+          status: res.status,
+          location: res.headers.get("location") || null,
+          hasLiveBadgeMarker:
+            /"style":"LIVE"/.test(html) ||
+            /label":"[^"]*CANLI/i.test(html) ||
+            /label":"[^"]*LIVE/i.test(html) ||
+            /"isLive":true/.test(html) ||
+            /"isLiveNow":true/.test(html),
+          canonicalLink: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] || null,
+          ogVideoId: html.match(/"videoId":"([\w-]{11})"/)?.[1] || null,
+          htmlLength: html.length,
+          htmlSnippet: html.slice(0, 500),
+        };
+      }
+    } else if (channelId === DEBUG_LIVE_CHANNEL_ID) {
+      debug = { status: res.status, location: res.headers.get("location") || null, note: "parsed.live=true, ekstra istek atılmadı" };
     }
-    return { ...parsed, avatar };
+    return { ...parsed, avatar, debug };
   } catch (err) {
     log(`[youtube] live kontrolü başarısız (${channelId}):`, err.message);
     return null; // bilinmiyor -> önceki durumu koru
@@ -344,6 +370,7 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
+    _liveDebug: liveInfo?.debug || null,
   };
 }
 
@@ -409,6 +436,7 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
+      ...(r._liveDebug ? { _liveDebug: r._liveDebug } : {}),
     };
 
     if (!isFirstRun) {
