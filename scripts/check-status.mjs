@@ -153,20 +153,13 @@ export function parseLatestVideoFromXml(xml) {
   };
 }
 
-// GEÇİCİ TEŞHİS: Mukmir'in YouTube'da canlı olduğu bildirildiği halde
-// live:false görünmesi sorununu araştırmak için, tek bir kanal için ham
-// HTTP durumunu/yönlendirmeyi status.json'a yazıyoruz. Sorun çözülünce
-// bu blok (ve _liveDebug alanı main()'de) kaldırılacak.
-const DEBUG_LIVE_CHANNEL_ID = "UC2IhlhOhWkA8t_eLBmFVK-w";
-
 async function checkYouTubeLive(channelId) {
   try {
     const res = await fetchWithTimeout(
       `https://www.youtube.com/channel/${channelId}/live`,
       { redirect: "manual" }
     );
-    const parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
-    let debug = null;
+    let parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
     // Canlı değilse profil fotoğrafını (avatar) da EK bir istek atmadan çıkarmaya
     // çalışıyoruz. Ama bu isteğin gövdesi her zaman kanalın kendi sayfası olmayabilir:
     // - Durum 200 ise gövde zaten kanal sayfasıdır, doğrudan kullanılır.
@@ -192,26 +185,17 @@ async function checkYouTubeLive(channelId) {
         // gövde okunamadı -> avatar bulunamadı sayılır, script çökmez
       }
 
-      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-        debug = {
-          status: res.status,
-          location: res.headers.get("location") || null,
-          hasLiveBadgeMarker:
-            /"style":"LIVE"/.test(html) ||
-            /label":"[^"]*CANLI/i.test(html) ||
-            /label":"[^"]*LIVE/i.test(html) ||
-            /"isLive":true/.test(html) ||
-            /"isLiveNow":true/.test(html),
-          canonicalLink: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] || null,
-          ogVideoId: html.match(/"videoId":"([\w-]{11})"/)?.[1] || null,
-          htmlLength: html.length,
-          htmlSnippet: html.slice(0, 500),
-        };
+      // YouTube artık bazı kanallarda /live adresine gidildiğinde 3xx
+      // yönlendirmesi YAPMIYOR: kanal gerçekten canlı olsa bile durum kodu
+      // doğrudan 200 ve gövde, canlı yayının kendi (watch) sayfası oluyor.
+      // Bu durumda yönlendirme yerine gövdenin içine gömülü oynatıcı
+      // (player response) JSON'undaki "isLive" alanına bakarak anlıyoruz.
+      if (html) {
+        const fromHtml = parseLiveFromHtml(html);
+        if (fromHtml.live) parsed = fromHtml;
       }
-    } else if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-      debug = { status: res.status, location: res.headers.get("location") || null, note: "parsed.live=true, ekstra istek atılmadı" };
     }
-    return { ...parsed, avatar, debug };
+    return { ...parsed, avatar };
   } catch (err) {
     log(`[youtube] live kontrolü başarısız (${channelId}):`, err.message);
     return null; // bilinmiyor -> önceki durumu koru
@@ -224,6 +208,24 @@ export function parseLiveRedirect(status, location) {
     const videoId = new URL(location, "https://www.youtube.com").searchParams.get("v");
     return { live: true, videoId };
   }
+  return { live: false, videoId: null };
+}
+
+// Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
+//
+// /live adresi 3xx yönlendirmesi yapmadan doğrudan 200 ile canlı yayın
+// sayfasını döndürdüğünde kullanılır. Sayfaya gömülü oynatıcı JSON'unda
+// (ytInitialPlayerResponse) "videoDetails" nesnesi altında hem videoId hem
+// de "isLive" alanı birlikte bulunur - ikisini birlikte eşleştirerek
+// sayfadaki alakasız (önerilen/ilgili video listesi gibi) videoId'lerle
+// karışmasını önlüyoruz. "isLiveContent" alanına KASITLI olarak bakmıyoruz;
+// o alan geçmişte canlı yayınlanmış ama artık bitmiş (VOD) videolar için de
+// hep true kalıyor, "isLive" ise sadece o an gerçekten yayında olan videoda
+// true oluyor.
+export function parseLiveFromHtml(html) {
+  if (!html) return { live: false, videoId: null };
+  const m = html.match(/"videoDetails":\{"videoId":"([\w-]{11})"[\s\S]{0,600}?"isLive":true/);
+  if (m) return { live: true, videoId: m[1] };
   return { live: false, videoId: null };
 }
 
@@ -370,7 +372,6 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
-    _liveDebug: liveInfo?.debug || null,
   };
 }
 
@@ -436,7 +437,6 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
-      ...(r._liveDebug ? { _liveDebug: r._liveDebug } : {}),
     };
 
     if (!isFirstRun) {
