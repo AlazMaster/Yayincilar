@@ -179,6 +179,12 @@ export function parseLatestVideoFromXml(xml) {
 // zaten bildiğimiz en son videonun kendi izleme sayfası hem canlı durumunu
 // hem avatarı verir, /live adresine ayrıca gitmiyoruz. /live'a sadece hiç
 // video bilgisi olmayan (RSS'i boş/başarısız) kanallar için düşüyoruz.
+//
+// GEÇİCİ TEŞHİS (5. tur): TalkativeKo örneğiyle, istek artık başarıyla
+// geçiyor (429 çözüldü) ama yine de canlı bulunamıyor. videoDetails/
+// microformat objelerinin TAMAMINI görüp gerçek alan adını bulacağız.
+const DEBUG_LIVE_CHANNEL_ID = "UCsRm9uJMLwQ05dQo0BYSCEg";
+
 async function checkYouTubeLive(channelId, latestVideoId) {
   try {
     if (latestVideoId) {
@@ -194,7 +200,22 @@ async function checkYouTubeLive(channelId, latestVideoId) {
       const watchHtml = await watchRes.text();
       const parsed = parseLiveFromHtml(watchHtml);
       const avatar = parseChannelAvatar(watchHtml);
-      return { ...parsed, avatar };
+
+      let debug5 = null;
+      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
+        // 5. tur teşhis: istek artık başarıyla geçiyor (429 yok) ama yine de
+        // canlı bulunamıyor. Tahmin etmek yerine videoDetails/microformat
+        // objelerinin TAMAMINI olduğu gibi döküyoruz ki YouTube'un güncel
+        // şemasında "şu an canlı" bilgisini GERÇEKTE hangi alanın taşıdığını
+        // gözle görelim.
+        debug5 = {
+          videoDetails: extractJsonValueAfterKey(watchHtml, '"videoDetails":'),
+          microformat: extractJsonValueAfterKey(watchHtml, '"playerMicroformatRenderer":'),
+          hasActiveLiveChat: /"activeLiveChatId"/.test(watchHtml),
+          hasLiveChatRenderer: /"liveChatRenderer"/.test(watchHtml),
+        };
+      }
+      return { ...parsed, avatar, debug5 };
     }
 
     // latestVideoId yoksa (ör. RSS okunamadı ya da kanalın hiç videosu yok)
@@ -465,6 +486,7 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
+    _liveDebug5: liveInfo?.debug5 || null,
   };
 }
 
@@ -530,6 +552,7 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
+      ...(r._liveDebug5 ? { _liveDebug5: r._liveDebug5 } : {}),
     };
 
     if (!isFirstRun) {
