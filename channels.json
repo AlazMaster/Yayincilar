@@ -16,16 +16,6 @@
       "name": "KutluB1lge",
       "url": "https://kick.com/kutlub1lge",
       "platform": "Kick"
-    },
-    {
-      "name": "Mukmir",
-      "url": "https://kick.com/mukmir",
-      "platform": "Kick"
-    },
-    {
-      "name": "AschezuAsche",
-      "url": "https://kick.com/aschezuasche",
-      "platform": "Kick"
     }
   ],
   "icerik": [
@@ -47,11 +37,6 @@
     {
       "name": "Mordecai",
       "url": "https://www.youtube.com/@IMordecai39",
-      "platform": "YouTube"
-    },
-    {
-      "name": "Nytherix",
-      "url": "https://www.youtube.com/@nytherixknight",
       "platform": "YouTube"
     }
   ]
