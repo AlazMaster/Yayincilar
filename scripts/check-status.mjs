@@ -31,6 +31,7 @@ const UA =
 // kanal için gerçek sayfa yapısını loglara yazıyoruz. Sorun çözülünce bu blok
 // (ve aşağıdaki log çağrıları) kaldırılacak.
 let ytDebugRemaining = 3;
+let idDebugRemaining = 3;
 
 function log(...args) {
   console.log(new Date().toISOString(), ...args);
@@ -89,11 +90,24 @@ async function resolveChannelId(entry, cache) {
   if (entry.channelID) return entry.channelID;
   if (cache[entry.url]) return cache[entry.url];
 
+  // GEÇİCİ TEŞHİS: önbellek (data/resolved-ids.json) boşsa HER kanal için bu
+  // fonksiyon sıfırdan ağa çıkmak zorunda kalıyor. Önceden bu adım sessizce
+  // (hiç log basmadan) null dönebiliyordu - bu da avatar sorununu araştırırken
+  // asıl sebebi gizliyordu. İlk birkaç kanal için burada da ne olduğunu logluyoruz.
+  const shouldDebug = idDebugRemaining > 0;
+  if (shouldDebug) idDebugRemaining--;
+
   const handlePath = extractYouTubeHandlePath(entry.url);
-  if (!handlePath) return null;
+  if (!handlePath) {
+    if (shouldDebug) log(`[id-debug] ${entry.name}: handlePath çıkarılamadı (url=${entry.url})`);
+    return null;
+  }
 
   try {
     const res = await fetchWithTimeout(`https://www.youtube.com${handlePath}`);
+    if (shouldDebug) {
+      log(`[id-debug] ${entry.name}: https://www.youtube.com${handlePath} -> durum=${res.status}`);
+    }
     if (!res.ok) return null;
     const html = await res.text();
     const m =
@@ -103,7 +117,12 @@ async function resolveChannelId(entry, cache) {
       cache[entry.url] = m[1];
       return m[1];
     }
+    if (shouldDebug) {
+      log(`[id-debug] ${entry.name}: sayfa geldi (uzunluk=${html.length}) ama channelId deseni bulunamadı`);
+      log(`[id-debug] ilk 300 karakter: ${JSON.stringify(html.slice(0, 300))}`);
+    }
   } catch (err) {
+    if (shouldDebug) log(`[id-debug] ${entry.name}: istek hatası: ${err.message}`);
     log(`[youtube] channelId çözülemedi (${entry.name}):`, err.message);
   }
   return null;
