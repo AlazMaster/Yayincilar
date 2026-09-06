@@ -170,86 +170,55 @@ export function parseLatestVideoFromXml(xml) {
 // okuyoruz. Gerçekten canlıysa YouTube bu videoyu RSS akışına daima en üstte
 // koyduğu için bu güvenilir bir varsayım.
 //
-// GEÇİCİ TEŞHİS (4. tur): watch sayfasını çekmeye başladık ama yine de
-// canlı bulunamadı - videoDetails/microformat'ın gerçekte ne döndürdüğünü
-// görmek için tek kanal için ham veriyi status.json'a yazıyoruz. Doğrulanınca
-// bu sabit (ve _liveDebug4 alanı) kaldırılacak.
-const DEBUG_LIVE_CHANNEL_ID = "UC2IhlhOhWkA8t_eLBmFVK-w";
-
+// ÖNEMLİ (rate-limit dersi): Bir önceki denemede hem /channel/{id}/live HEM
+// de /watch?v=... adreslerine istek atıyorduk. Bu, kanal başına isteği
+// ikiye katladı ve GitHub Actions'ın paylaşımlı IP'lerinden YouTube'a
+// gidildiğinde HTTP 429 (Too Many Requests) almaya başladık - bu da watch
+// sayfasının hiç okunamamasına (ve olduğundan farklı, yanlış "canlı değil"
+// sonucuna) yol açtı. Bu yüzden artık MÜMKÜNSE TEK istek atıyoruz: RSS'ten
+// zaten bildiğimiz en son videonun kendi izleme sayfası hem canlı durumunu
+// hem avatarı verir, /live adresine ayrıca gitmiyoruz. /live'a sadece hiç
+// video bilgisi olmayan (RSS'i boş/başarısız) kanallar için düşüyoruz.
 async function checkYouTubeLive(channelId, latestVideoId) {
   try {
+    if (latestVideoId) {
+      const watchRes = await fetchWithTimeout(`https://www.youtube.com/watch?v=${latestVideoId}`);
+      if (!watchRes.ok) {
+        // 429/5xx gibi geçici bir durumda "kesinlikle canlı değil" diye
+        // yanlış bir sonuca varmak yerine "bilinmiyor" döndürüyoruz -
+        // main() bunu önceki bilinen durumu (live=true olabilir) koruyarak
+        // ele alıyor, yanlışlıkla false'a çevirmiyor.
+        log(`[youtube] watch sayfası HTTP ${watchRes.status} döndü (${channelId}), önceki durum korunuyor.`);
+        return null;
+      }
+      const watchHtml = await watchRes.text();
+      const parsed = parseLiveFromHtml(watchHtml);
+      const avatar = parseChannelAvatar(watchHtml);
+      return { ...parsed, avatar };
+    }
+
+    // latestVideoId yoksa (ör. RSS okunamadı ya da kanalın hiç videosu yok)
+    // eski /live yöntemine düşüyoruz - bu durumda ekstra istek maliyeti
+    // zaten sınırlı sayıda kanalı etkiler.
     const res = await fetchWithTimeout(
       `https://www.youtube.com/channel/${channelId}/live`,
       { redirect: "manual" }
     );
-    let parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
-    // Canlı değilse profil fotoğrafını (avatar) da EK bir istek atmadan çıkarmaya
-    // çalışıyoruz. Ama bu isteğin gövdesi her zaman kanalın kendi sayfası olmayabilir:
-    // - Durum 200 ise gövde zaten kanal sayfasıdır, doğrudan kullanılır.
-    // - Durum 3xx ama hedef bir video (watch?v=) değilse (örn. kanalın ana sayfasına
-    //   yönlendirme), "manual" modda gövde boş gelir; bu durumda hedefe ayrıca,
-    //   normal (takip eden) bir istekle gidip gerçek sayfayı çekiyoruz.
+    const parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
     let avatar = null;
     if (!parsed.live) {
-      let html = "";
       try {
-        if (res.status >= 300 && res.status < 400) {
-          const location = res.headers.get("location");
-          const target = location
-            ? new URL(location, "https://www.youtube.com").toString()
-            : `https://www.youtube.com/channel/${channelId}`;
-          const res2 = await fetchWithTimeout(target);
-          html = await res2.text();
-        } else {
-          html = await res.text();
-        }
+        const html =
+          res.status >= 300 && res.status < 400
+            ? await (
+                await fetchWithTimeout(
+                  new URL(res.headers.get("location") || `/channel/${channelId}`, "https://www.youtube.com").toString()
+                )
+              ).text()
+            : await res.text();
         avatar = parseChannelAvatar(html);
       } catch {
         // gövde okunamadı -> avatar bulunamadı sayılır, script çökmez
-      }
-
-      // /live sayfası (yukarıdaki html) çoğunlukla tam oynatıcı verisi
-      // içermiyor. Bunun yerine RSS'ten bilinen en son videonun KENDİ
-      // izleme sayfasına bakıyoruz - gerçek bir watch sayfası her zaman tam
-      // ytInitialPlayerResponse içerir.
-      let debug4 = null;
-      if (latestVideoId) {
-        try {
-          const watchRes = await fetchWithTimeout(`https://www.youtube.com/watch?v=${latestVideoId}`);
-          const watchHtml = await watchRes.text();
-          const fromWatch = parseLiveFromHtml(watchHtml);
-          if (fromWatch.live) parsed = fromWatch;
-          if (!avatar) avatar = parseChannelAvatar(watchHtml);
-
-          if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-            // 4. tur teşhis: watch sayfasını başarıyla çektik (durumunu ve
-            // uzunluğunu görelim), ama parseLiveFromHtml yine de canlı
-            // bulamadıysa videoDetails/microformat'ın GERÇEKTE ne içerdiğini
-            // görmemiz lazım.
-            const videoDetails = extractJsonValueAfterKey(watchHtml, '"videoDetails":');
-            const microformat = extractJsonValueAfterKey(watchHtml, '"playerMicroformatRenderer":');
-            debug4 = {
-              watchStatus: watchRes.status,
-              watchHtmlLength: watchHtml.length,
-              videoDetailsFound: !!videoDetails,
-              videoDetailsVideoId: videoDetails?.videoId ?? null,
-              videoDetailsIsLive: videoDetails?.isLive ?? "yok",
-              videoDetailsIsLiveContent: videoDetails?.isLiveContent ?? "yok",
-              microformatFound: !!microformat,
-              liveBroadcastDetails: microformat?.liveBroadcastDetails ?? "yok",
-              rawHasIsLiveTrueText: /"isLive":true/.test(watchHtml),
-              rawHasIsLiveNowTrueText: /"isLiveNow":true/.test(watchHtml),
-              parsedFromWatchResult: fromWatch,
-            };
-          }
-        } catch (e) {
-          if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-            debug4 = { fetchError: e.message };
-          }
-        }
-      }
-      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-        return { ...parsed, avatar, debug4 };
       }
     }
     return { ...parsed, avatar };
@@ -496,7 +465,6 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
-    _liveDebug4: liveInfo?.debug4 || null,
   };
 }
 
@@ -562,7 +530,6 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
-      ...(r._liveDebug4 ? { _liveDebug4: r._liveDebug4 } : {}),
     };
 
     if (!isFirstRun) {
