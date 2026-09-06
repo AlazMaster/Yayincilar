@@ -110,15 +110,33 @@ async function resolveChannelId(entry, cache) {
     }
     if (!res.ok) return null;
     const html = await res.text();
-    const m =
-      html.match(/"channelId":"(UC[0-9A-Za-z_-]{22})"/) ||
-      html.match(/<meta itemprop="channelId" content="(UC[0-9A-Za-z_-]{22})">/);
+    // YouTube sayfa yapısını zaman zaman değiştiriyor (ör. yeni "WIZ" tabanlı
+    // düzen). Tek bir alana güvenmek yerine, kanal sayfasında görülmesi
+    // muhtemel birkaç farklı yeri sırayla deniyoruz - en kararlı olanlar
+    // (RSS besleme linki, canonical link) önce.
+    const patterns = [
+      /feeds\/videos\.xml\?channel_id=(UC[0-9A-Za-z_-]{22})/,
+      /<link rel="canonical" href="https:\/\/www\.youtube\.com\/channel\/(UC[0-9A-Za-z_-]{22})"/,
+      /<meta property="og:url" content="https:\/\/www\.youtube\.com\/channel\/(UC[0-9A-Za-z_-]{22})"/,
+      /"externalId":"(UC[0-9A-Za-z_-]{22})"/,
+      /"browseId":"(UC[0-9A-Za-z_-]{22})"/,
+      /"channelId":"(UC[0-9A-Za-z_-]{22})"/,
+      /<meta itemprop="channelId" content="(UC[0-9A-Za-z_-]{22})">/,
+    ];
+    let m = null;
+    for (const re of patterns) {
+      m = html.match(re);
+      if (m) break;
+    }
     if (m) {
       cache[entry.url] = m[1];
       return m[1];
     }
     if (shouldDebug) {
       log(`[id-debug] ${entry.name}: sayfa geldi (uzunluk=${html.length}) ama channelId deseni bulunamadı`);
+      log(
+        `[id-debug] ${entry.name}: içerik ipuçları -> feeds/videos.xml=${html.includes("feeds/videos.xml")}, externalId=${html.includes("externalId")}, browseId=${html.includes("browseId")}, canonical=${html.includes('rel="canonical"')}`
+      );
       log(`[id-debug] ilk 300 karakter: ${JSON.stringify(html.slice(0, 300))}`);
     }
   } catch (err) {
