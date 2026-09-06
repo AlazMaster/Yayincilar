@@ -153,6 +153,13 @@ export function parseLatestVideoFromXml(xml) {
   };
 }
 
+// GEÇİCİ TEŞHİS (2. tur): İlk denemedeki (videoId<->isLive proximity) yöntem
+// yanlış çıktı - Mukmir gerçekten canlıyken hâlâ live:false veriyordu. Şimdi
+// "isLiveNow" tabanlı yeni yönteme geçtik; bunu gerçek veriyle doğrulamak
+// için tek kanal için ham durumu status.json'a yazıyoruz. Doğrulanınca bu
+// blok (ve _liveDebug2 alanı main()'de) kaldırılacak.
+const DEBUG_LIVE_CHANNEL_ID = "UC2IhlhOhWkA8t_eLBmFVK-w";
+
 async function checkYouTubeLive(channelId) {
   try {
     const res = await fetchWithTimeout(
@@ -160,6 +167,7 @@ async function checkYouTubeLive(channelId) {
       { redirect: "manual" }
     );
     let parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
+    let debug2 = null;
     // Canlı değilse profil fotoğrafını (avatar) da EK bir istek atmadan çıkarmaya
     // çalışıyoruz. Ama bu isteğin gövdesi her zaman kanalın kendi sayfası olmayabilir:
     // - Durum 200 ise gövde zaten kanal sayfasıdır, doğrudan kullanılır.
@@ -194,8 +202,22 @@ async function checkYouTubeLive(channelId) {
         const fromHtml = parseLiveFromHtml(html);
         if (fromHtml.live) parsed = fromHtml;
       }
+
+      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
+        const idx = html.indexOf('"isLiveNow"');
+        debug2 = {
+          status: res.status,
+          location: res.headers.get("location") || null,
+          htmlLength: html.length,
+          hasIsLiveNowTrue: /"isLiveNow":true/.test(html),
+          hasIsLiveNowAnywhere: /"isLiveNow"/.test(html),
+          isLiveNowContext: idx >= 0 ? html.slice(Math.max(0, idx - 80), idx + 40) : null,
+          canonicalLink: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] || null,
+          parsedFromHtmlResult: parseLiveFromHtml(html),
+        };
+      }
     }
-    return { ...parsed, avatar };
+    return { ...parsed, avatar, debug2 };
   } catch (err) {
     log(`[youtube] live kontrolü başarısız (${channelId}):`, err.message);
     return null; // bilinmiyor -> önceki durumu koru
@@ -214,19 +236,32 @@ export function parseLiveRedirect(status, location) {
 // Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
 //
 // /live adresi 3xx yönlendirmesi yapmadan doğrudan 200 ile canlı yayın
-// sayfasını döndürdüğünde kullanılır. Sayfaya gömülü oynatıcı JSON'unda
-// (ytInitialPlayerResponse) "videoDetails" nesnesi altında hem videoId hem
-// de "isLive" alanı birlikte bulunur - ikisini birlikte eşleştirerek
-// sayfadaki alakasız (önerilen/ilgili video listesi gibi) videoId'lerle
-// karışmasını önlüyoruz. "isLiveContent" alanına KASITLI olarak bakmıyoruz;
-// o alan geçmişte canlı yayınlanmış ama artık bitmiş (VOD) videolar için de
-// hep true kalıyor, "isLive" ise sadece o an gerçekten yayında olan videoda
-// true oluyor.
+// sayfasını döndürdüğünde kullanılır.
+//
+// İlk denemede "videoDetails":{"videoId":"..."..."isLive":true} alanlarını
+// birbirine yakınlığa (proximity) bakarak eşleştirmeye çalışmıştık, ama bu
+// YANLIŞ ÇIKTI: videoDetails içindeki "shortDescription" alanı genelde
+// birkaç yüz karakterden uzun olduğu için videoId ile gerçek "isLive"
+// alanı arası bizim aradığımız pencereden (600 karakter) daha uzun kalıyor;
+// üstelik sayfada başka (önerilen/ilgili video) bir videoya ait "isLive"
+// benzeri alanlar da bulunabiliyor ve yanlışlıkla eşleşebiliyor.
+//
+// Bunun yerine yt-dlp gibi araçların da kullandığı, sayfanın KENDİ videosuna
+// özgü ve konumdan bağımsız çalışan alanı kullanıyoruz:
+// microformat.playerMicroformatRenderer.liveBroadcastDetails.isLiveNow
+// -> JSON'da düz metin olarak "isLiveNow":true şeklinde geçer ve sadece o
+// sayfanın ait olduğu video gerçekten O AN yayındaysa true olur (biten bir
+// yayında bu alan ya hiç yok ya da false'a döner, "isLiveContent" gibi kalıcı
+// olarak true kalmaz). videoId'yi ise ayrı ve güvenilir bir yerden
+// (canonical link, o yoksa ilk "videoId" alanı) alıyoruz.
 export function parseLiveFromHtml(html) {
   if (!html) return { live: false, videoId: null };
-  const m = html.match(/"videoDetails":\{"videoId":"([\w-]{11})"[\s\S]{0,600}?"isLive":true/);
-  if (m) return { live: true, videoId: m[1] };
-  return { live: false, videoId: null };
+  if (!/"isLiveNow":true/.test(html)) return { live: false, videoId: null };
+  const videoId =
+    html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/)?.[1] ||
+    html.match(/"videoId":"([\w-]{11})"/)?.[1] ||
+    null;
+  return { live: true, videoId };
 }
 
 // Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
@@ -372,6 +407,7 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
+    _liveDebug2: liveInfo?.debug2 || null,
   };
 }
 
@@ -437,6 +473,7 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
+      ...(r._liveDebug2 ? { _liveDebug2: r._liveDebug2 } : {}),
     };
 
     if (!isFirstRun) {
