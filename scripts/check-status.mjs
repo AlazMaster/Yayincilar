@@ -153,22 +153,29 @@ export function parseLatestVideoFromXml(xml) {
   };
 }
 
-// GEÇİCİ TEŞHİS (2. tur): İlk denemedeki (videoId<->isLive proximity) yöntem
-// yanlış çıktı - Mukmir gerçekten canlıyken hâlâ live:false veriyordu. Şimdi
-// "isLiveNow" tabanlı yeni yönteme geçtik; bunu gerçek veriyle doğrulamak
-// için tek kanal için ham durumu status.json'a yazıyoruz. Doğrulanınca bu
-// blok (ve _liveDebug2 alanı main()'de) kaldırılacak.
-const DEBUG_LIVE_CHANNEL_ID = "UC2IhlhOhWkA8t_eLBmFVK-w";
-const DEBUG_KNOWN_LIVE_VIDEO_ID = "L64pOwPX3jM";
-
-async function checkYouTubeLive(channelId) {
+// GEÇMİŞ TEŞHİS SÜRECİ (özet): Mukmir örneğinde YouTube'un /channel/{id}/live
+// adresi artık her zaman 3xx yönlendirmesi YAPMIYOR; bazı kanallarda doğrudan
+// 200 ile kanalın kendi (ana/ev) sayfasını döndürüyor. Sırasıyla "videoId<->
+// isLive yakınlığı" ve "isLiveNow düz metni" gibi regex tahminleri denendi,
+// ikisi de yanlış çıktı - çünkü bu 200 yanıtının gövdesi aslında TAM bir
+// izleme (watch) sayfası değil, kanalın ana sayfası (ve içindeki küçük bir
+// "şu an canlı" widget'ı); bu widget'ta tam "videoDetails"/"microformat"
+// oynatıcı verisi gömülü değil. Gerçek veriyle (kullanıcının doğruladığı
+// canlı videoId'si sayfada nerede geçiyor diye bakarak) doğrulandı.
+//
+// KESİN ÇÖZÜM: /live yönlendirmesine güvenmek yerine, RSS'ten bildiğimiz en
+// son videonun KENDİ izleme sayfasını (https://www.youtube.com/watch?v=...)
+// ayrıca çekip, oradaki TAM oynatıcı verisini (ytInitialPlayerResponse)
+// düzgün bir JSON ayrıştırıcıyla (parantez dengeleme, regex yakınlığı değil)
+// okuyoruz. Gerçekten canlıysa YouTube bu videoyu RSS akışına daima en üstte
+// koyduğu için bu güvenilir bir varsayım.
+async function checkYouTubeLive(channelId, latestVideoId) {
   try {
     const res = await fetchWithTimeout(
       `https://www.youtube.com/channel/${channelId}/live`,
       { redirect: "manual" }
     );
     let parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
-    let debug2 = null;
     // Canlı değilse profil fotoğrafını (avatar) da EK bir istek atmadan çıkarmaya
     // çalışıyoruz. Ama bu isteğin gövdesi her zaman kanalın kendi sayfası olmayabilir:
     // - Durum 200 ise gövde zaten kanal sayfasıdır, doğrudan kullanılır.
@@ -194,43 +201,23 @@ async function checkYouTubeLive(channelId) {
         // gövde okunamadı -> avatar bulunamadı sayılır, script çökmez
       }
 
-      // YouTube artık bazı kanallarda /live adresine gidildiğinde 3xx
-      // yönlendirmesi YAPMIYOR: kanal gerçekten canlı olsa bile durum kodu
-      // doğrudan 200 ve gövde, canlı yayının kendi (watch) sayfası oluyor.
-      // Bu durumda yönlendirme yerine gövdenin içine gömülü oynatıcı
-      // (player response) JSON'undaki "isLive" alanına bakarak anlıyoruz.
-      if (html) {
-        const fromHtml = parseLiveFromHtml(html);
-        if (fromHtml.live) parsed = fromHtml;
-      }
-
-      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-        // 3. tur: "labelLive" eşleşmesi sahte çıktı - "PLAYER_LIVE_LABEL":"Live"
-        // gibi her sayfada bulunan, oynatıcı arayüzünün genel çeviri metniymiş,
-        // canlı yayınla ilgisi yok. Bu sefer dolaylı desenlerle uğraşmak yerine
-        // KULLANICININ DOĞRULADIĞI gerçek canlı videoId'sini
-        // (DEBUG_KNOWN_LIVE_VIDEO_ID, "L64pOwPX3jM") sayfada nerede/nasıl
-        // geçtiğine doğrudan bakıyoruz: her geçtiği yerin 200 karakter
-        // öncesi/sonrasını görürsek, YouTube'un bu videoyu canlı olarak
-        // işaretlediği gerçek JSON alanını gözle görebiliriz.
-        const occurrences = [];
-        const re = new RegExp(DEBUG_KNOWN_LIVE_VIDEO_ID, "g");
-        let m;
-        while ((m = re.exec(html)) && occurrences.length < 8) {
-          occurrences.push(html.slice(Math.max(0, m.index - 200), m.index + 200));
+      // /live sayfası (yukarıdaki html) çoğunlukla tam oynatıcı verisi
+      // içermiyor. Bunun yerine RSS'ten bilinen en son videonun KENDİ
+      // izleme sayfasına bakıyoruz - gerçek bir watch sayfası her zaman tam
+      // ytInitialPlayerResponse içerir.
+      if (latestVideoId) {
+        try {
+          const watchRes = await fetchWithTimeout(`https://www.youtube.com/watch?v=${latestVideoId}`);
+          const watchHtml = await watchRes.text();
+          const fromWatch = parseLiveFromHtml(watchHtml);
+          if (fromWatch.live) parsed = fromWatch;
+          if (!avatar) avatar = parseChannelAvatar(watchHtml);
+        } catch {
+          // izleme sayfası okunamadı -> canlı durumu bilinmiyor sayılır (false kalır)
         }
-        debug2 = {
-          status: res.status,
-          location: res.headers.get("location") || null,
-          htmlLength: html.length,
-          knownLiveVideoIdOccurrenceCount: occurrences.length,
-          knownLiveVideoIdContexts: occurrences,
-          canonicalLink: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] || null,
-          parsedFromHtmlResult: parseLiveFromHtml(html),
-        };
       }
     }
-    return { ...parsed, avatar, debug2 };
+    return { ...parsed, avatar };
   } catch (err) {
     log(`[youtube] live kontrolü başarısız (${channelId}):`, err.message);
     return null; // bilinmiyor -> önceki durumu koru
@@ -248,31 +235,84 @@ export function parseLiveRedirect(status, location) {
 
 // Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
 //
-// /live adresi 3xx yönlendirmesi yapmadan doğrudan 200 ile canlı yayın
-// sayfasını döndürdüğünde kullanılır.
+// Metin içinde startIdx'teki '{' veya '['  ile başlayan JSON değerinin tam
+// olarak nerede bittiğini, tırnak içi karakterleri ve kaçış (\") dizilerini
+// doğru sayarak bulur. Regex ile "yakınlık" tahmini yapmak yerine (ki bu
+// -shortDescription gibi uzun alanlar yüzünden yanlış çıkabiliyordu-) parantez
+// dengesini gerçekten sayar, böylece iç içe obje/dizi ne kadar uzun/karmaşık
+// olursa olsun doğru sınırı bulur.
+export function extractBalancedJson(text, startIdx) {
+  const open = text[startIdx];
+  const close = open === "{" ? "}" : open === "[" ? "]" : null;
+  if (!close) return null;
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+  for (let i = startIdx; i < text.length; i++) {
+    const ch = text[i];
+    if (inString) {
+      if (escape) escape = false;
+      else if (ch === "\\") escape = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') {
+      inString = true;
+      continue;
+    }
+    if (ch === open) depth++;
+    else if (ch === close) {
+      depth--;
+      if (depth === 0) return text.slice(startIdx, i + 1);
+    }
+  }
+  return null;
+}
+
+// Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
 //
-// İlk denemede "videoDetails":{"videoId":"..."..."isLive":true} alanlarını
-// birbirine yakınlığa (proximity) bakarak eşleştirmeye çalışmıştık, ama bu
-// YANLIŞ ÇIKTI: videoDetails içindeki "shortDescription" alanı genelde
-// birkaç yüz karakterden uzun olduğu için videoId ile gerçek "isLive"
-// alanı arası bizim aradığımız pencereden (600 karakter) daha uzun kalıyor;
-// üstelik sayfada başka (önerilen/ilgili video) bir videoya ait "isLive"
-// benzeri alanlar da bulunabiliyor ve yanlışlıkla eşleşebiliyor.
+// `"anahtar":` metnini bulup hemen ardından gelen JSON değerini (obje/dizi)
+// ayrıştırır ve JS nesnesi olarak döner. Bozuk/eksikse null döner, script
+// çökmez.
+export function extractJsonValueAfterKey(text, keyLiteral) {
+  if (!text) return null;
+  const idx = text.indexOf(keyLiteral);
+  if (idx === -1) return null;
+  const valueStart = idx + keyLiteral.length;
+  const ch = text[valueStart];
+  if (ch !== "{" && ch !== "[") return null;
+  const raw = extractBalancedJson(text, valueStart);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+// Saf fonksiyon (ağ çağrısı yok) -> test edilebilir
 //
-// Bunun yerine yt-dlp gibi araçların da kullandığı, sayfanın KENDİ videosuna
-// özgü ve konumdan bağımsız çalışan alanı kullanıyoruz:
-// microformat.playerMicroformatRenderer.liveBroadcastDetails.isLiveNow
-// -> JSON'da düz metin olarak "isLiveNow":true şeklinde geçer ve sadece o
-// sayfanın ait olduğu video gerçekten O AN yayındaysa true olur (biten bir
-// yayında bu alan ya hiç yok ya da false'a döner, "isLiveContent" gibi kalıcı
-// olarak true kalmaz). videoId'yi ise ayrı ve güvenilir bir yerden
-// (canonical link, o yoksa ilk "videoId" alanı) alıyoruz.
+// Bir video izleme (watch) sayfasının HTML'inden gerçekten O AN canlı olup
+// olmadığını çıkarır. Sayfaya gömülü oynatıcı verisindeki iki bağımsız alana
+// bakıyoruz (biri varsa yeter):
+//   - videoDetails.isLive
+//   - microformat.playerMicroformatRenderer.liveBroadcastDetails.isLiveNow
+// "isLiveContent" alanına KASITLI olarak bakmıyoruz; o alan geçmişte canlı
+// yayınlanmış ama artık bitmiş (VOD) videolar için de hep true kalıyor.
 export function parseLiveFromHtml(html) {
   if (!html) return { live: false, videoId: null };
-  if (!/"isLiveNow":true/.test(html)) return { live: false, videoId: null };
+
+  const videoDetails = extractJsonValueAfterKey(html, '"videoDetails":');
+  const microformat = extractJsonValueAfterKey(html, '"playerMicroformatRenderer":');
+
+  const isLive =
+    videoDetails?.isLive === true || microformat?.liveBroadcastDetails?.isLiveNow === true;
+
+  if (!isLive) return { live: false, videoId: null };
+
   const videoId =
+    videoDetails?.videoId ||
     html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/)?.[1] ||
-    html.match(/"videoId":"([\w-]{11})"/)?.[1] ||
     null;
   return { live: true, videoId };
 }
@@ -400,10 +440,11 @@ async function processYouTubeEntry(entry, cache) {
     return { key: entry.url, name: entry.name, live: undefined, newVideo: undefined, error: "channelId yok" };
   }
 
-  const [latest, liveInfo] = await Promise.all([
-    getLatestVideo(channelId),
-    checkYouTubeLive(channelId),
-  ]);
+  // Sırayla çalıştırıyoruz (paralel değil): checkYouTubeLive artık RSS'ten
+  // bilinen en son videonun izleme sayfasını da kontrol ediyor, bu yüzden
+  // önce onu (latest) bilmesi gerekiyor.
+  const latest = await getLatestVideo(channelId);
+  const liveInfo = await checkYouTubeLive(channelId, latest?.videoId || null);
 
   const newVideo = latest ? isWithinHours(latest.publishedAt, NEW_VIDEO_WINDOW_HOURS) : false;
 
@@ -420,7 +461,6 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
-    _liveDebug2: liveInfo?.debug2 || null,
   };
 }
 
@@ -486,7 +526,6 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
-      ...(r._liveDebug2 ? { _liveDebug2: r._liveDebug2 } : {}),
     };
 
     if (!isFirstRun) {
