@@ -2,7 +2,7 @@ name: Canli Yayin ve Yeni Video Takibi
 
 "on":
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "2-59/5 * * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -46,10 +46,6 @@ jobs:
           fi
           git commit -m "Durum guncellendi [otomatik]"
 
-          # Ayni anda calisan baska bir otomasyon turu araya girip push'u
-          # reddedebilir. status.json/channels.json her turda sifirdan
-          # hesaplandigi icin boyle bir cakismada kendi (en taze) halimizi
-          # esas almak guvenli - birkac saniye icinde tekrar deneriz.
           for i in 1 2 3 4 5; do
             git fetch origin main
             if git rebase origin/main -X ours && git push origin HEAD:main; then
