@@ -229,6 +229,19 @@ async function checkYouTubeLive(channelId) {
         log(
           `[yt-debug] channelId=${channelId} sonDurum=${debugStatus} htmlUzunluk=${html.length} avatarBulundu=${!!avatar}`
         );
+        if (!avatar) {
+          // Avatar hâlâ bulunamadıysa, sayfada hangi ipuçlarının olup olmadığını
+          // logluyoruz - bir sonraki düzeltmeyi kör denemeden yapabilmek için.
+          log(
+            `[yt-debug] channelId=${channelId} avatar ipuçları -> og:image=${html.includes("og:image")}, avatarViewModel=${html.includes("avatarViewModel")}, "avatar"=${html.includes('"avatar"')}, yt3.googleusercontent=${html.includes("yt3.googleusercontent.com")}`
+          );
+          const avatarIdx = html.search(/avatar/i);
+          if (avatarIdx >= 0) {
+            log(
+              `[yt-debug] channelId=${channelId} "avatar" çevresi: ${JSON.stringify(html.slice(Math.max(0, avatarIdx - 40), avatarIdx + 260))}`
+            );
+          }
+        }
         log(`[yt-debug] ilk 300 karakter: ${JSON.stringify(html.slice(0, 300))}`);
       }
     } else if (shouldDebug) {
@@ -259,17 +272,47 @@ export function parseLiveRedirect(status, location) {
 // klasik <meta>/<link> etiketleri her zaman bulunmayabiliyor (özellikle
 // JavaScript ile doldurulan bazı sayfa varyantlarında), o yüzden sayfanın
 // içine gömülü ilk yükleme JSON'undaki alanları da yedek olarak deniyoruz.
+// <meta>/<link> etiketlerindeki özellik sırası (property/content, content/property...)
+// YouTube'un farklı sayfa şablonlarında değişebiliyor; bu yüzden tek bir sıraya
+// güvenmek yerine etiketin tamamını bulup içinden istediğimiz özelliği çekiyoruz.
+function extractTagAttr(html, tagRegexSource, attrToExtract) {
+  const tagMatch = html.match(new RegExp(tagRegexSource, "i"));
+  if (!tagMatch) return null;
+  const attrMatch = tagMatch[0].match(new RegExp(`${attrToExtract}=["']([^"']+)["']`, "i"));
+  return attrMatch ? attrMatch[1] : null;
+}
+
 export function parseChannelAvatar(html) {
   if (!html) return null;
-  const patterns = [
-    /<meta property="og:image" content="([^"]+)"/,
-    /<link itemprop="thumbnailUrl" href="([^"]+)"/,
+
+  // 1) og:image / twitter:image meta etiketi - özellik sırasından bağımsız
+  for (const key of ["og:image", "twitter:image"]) {
+    const url = extractTagAttr(html, `<meta[^>]*(?:property|name)=["']${key}["'][^>]*>`, "content");
+    if (url) return decodeEntities(url);
+  }
+
+  // 2) <link itemprop="thumbnailUrl"> - özellik sırasından bağımsız
+  const thumbUrl = extractTagAttr(html, `<link[^>]*itemprop=["']thumbnailUrl["'][^>]*>`, "href");
+  if (thumbUrl) return decodeEntities(thumbUrl);
+
+  // 3) Eski/bilinen gömülü JSON şekilleri
+  const jsonPatterns = [
     /"avatar":\{"thumbnails":\[\{"url":"([^"]+)"/,
+    /"avatarViewModel":\{"image":\{"sources":\[\{"url":"([^"]+)"/,
   ];
-  for (const re of patterns) {
+  for (const re of jsonPatterns) {
     const m = html.match(re);
     if (m) return decodeEntities(m[1]);
   }
+
+  // 4) Genel yedek: YouTube sayfa yapısını değiştirdiğinde (ör. yeni "WIZ"
+  // tabanlı düzen) yukarıdaki kalıpların hiçbiri tutmayabilir. Bu durumda
+  // "avatar" geçen kelimenin hemen ardından gelen ilk "url":"..." alanını
+  // yakalamayı deniyoruz - iç JSON anahtar adları değişse bile genelde
+  // "avatar" kelimesi bir şekilde geçmeye devam ediyor.
+  const looseMatch = html.match(/avatar[\s\S]{0,300}?"url":"([^"]+)"/i);
+  if (looseMatch) return decodeEntities(looseMatch[1]);
+
   return null;
 }
 
