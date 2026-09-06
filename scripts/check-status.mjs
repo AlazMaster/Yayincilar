@@ -169,6 +169,13 @@ export function parseLatestVideoFromXml(xml) {
 // düzgün bir JSON ayrıştırıcıyla (parantez dengeleme, regex yakınlığı değil)
 // okuyoruz. Gerçekten canlıysa YouTube bu videoyu RSS akışına daima en üstte
 // koyduğu için bu güvenilir bir varsayım.
+//
+// GEÇİCİ TEŞHİS (4. tur): watch sayfasını çekmeye başladık ama yine de
+// canlı bulunamadı - videoDetails/microformat'ın gerçekte ne döndürdüğünü
+// görmek için tek kanal için ham veriyi status.json'a yazıyoruz. Doğrulanınca
+// bu sabit (ve _liveDebug4 alanı) kaldırılacak.
+const DEBUG_LIVE_CHANNEL_ID = "UC2IhlhOhWkA8t_eLBmFVK-w";
+
 async function checkYouTubeLive(channelId, latestVideoId) {
   try {
     const res = await fetchWithTimeout(
@@ -205,6 +212,7 @@ async function checkYouTubeLive(channelId, latestVideoId) {
       // içermiyor. Bunun yerine RSS'ten bilinen en son videonun KENDİ
       // izleme sayfasına bakıyoruz - gerçek bir watch sayfası her zaman tam
       // ytInitialPlayerResponse içerir.
+      let debug4 = null;
       if (latestVideoId) {
         try {
           const watchRes = await fetchWithTimeout(`https://www.youtube.com/watch?v=${latestVideoId}`);
@@ -212,9 +220,36 @@ async function checkYouTubeLive(channelId, latestVideoId) {
           const fromWatch = parseLiveFromHtml(watchHtml);
           if (fromWatch.live) parsed = fromWatch;
           if (!avatar) avatar = parseChannelAvatar(watchHtml);
-        } catch {
-          // izleme sayfası okunamadı -> canlı durumu bilinmiyor sayılır (false kalır)
+
+          if (channelId === DEBUG_LIVE_CHANNEL_ID) {
+            // 4. tur teşhis: watch sayfasını başarıyla çektik (durumunu ve
+            // uzunluğunu görelim), ama parseLiveFromHtml yine de canlı
+            // bulamadıysa videoDetails/microformat'ın GERÇEKTE ne içerdiğini
+            // görmemiz lazım.
+            const videoDetails = extractJsonValueAfterKey(watchHtml, '"videoDetails":');
+            const microformat = extractJsonValueAfterKey(watchHtml, '"playerMicroformatRenderer":');
+            debug4 = {
+              watchStatus: watchRes.status,
+              watchHtmlLength: watchHtml.length,
+              videoDetailsFound: !!videoDetails,
+              videoDetailsVideoId: videoDetails?.videoId ?? null,
+              videoDetailsIsLive: videoDetails?.isLive ?? "yok",
+              videoDetailsIsLiveContent: videoDetails?.isLiveContent ?? "yok",
+              microformatFound: !!microformat,
+              liveBroadcastDetails: microformat?.liveBroadcastDetails ?? "yok",
+              rawHasIsLiveTrueText: /"isLive":true/.test(watchHtml),
+              rawHasIsLiveNowTrueText: /"isLiveNow":true/.test(watchHtml),
+              parsedFromWatchResult: fromWatch,
+            };
+          }
+        } catch (e) {
+          if (channelId === DEBUG_LIVE_CHANNEL_ID) {
+            debug4 = { fetchError: e.message };
+          }
         }
+      }
+      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
+        return { ...parsed, avatar, debug4 };
       }
     }
     return { ...parsed, avatar };
@@ -461,6 +496,7 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
+    _liveDebug4: liveInfo?.debug4 || null,
   };
 }
 
@@ -526,6 +562,7 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
+      ...(r._liveDebug4 ? { _liveDebug4: r._liveDebug4 } : {}),
     };
 
     if (!isFirstRun) {
