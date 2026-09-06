@@ -27,12 +27,6 @@ const KICK_DELAY_MS = 500; // Kick isteklerini birbirinden ayır (nazik davran)
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
-// GEÇİCİ TEŞHİS: YouTube avatarı neden bulunamıyor anlayana kadar, ilk birkaç
-// kanal için gerçek sayfa yapısını loglara yazıyoruz. Sorun çözülünce bu blok
-// (ve aşağıdaki log çağrıları) kaldırılacak.
-let ytDebugRemaining = 3;
-let idDebugRemaining = 3;
-
 function log(...args) {
   console.log(new Date().toISOString(), ...args);
 }
@@ -90,24 +84,13 @@ async function resolveChannelId(entry, cache) {
   if (entry.channelID) return entry.channelID;
   if (cache[entry.url]) return cache[entry.url];
 
-  // GEÇİCİ TEŞHİS: önbellek (data/resolved-ids.json) boşsa HER kanal için bu
-  // fonksiyon sıfırdan ağa çıkmak zorunda kalıyor. Önceden bu adım sessizce
-  // (hiç log basmadan) null dönebiliyordu - bu da avatar sorununu araştırırken
-  // asıl sebebi gizliyordu. İlk birkaç kanal için burada da ne olduğunu logluyoruz.
-  const shouldDebug = idDebugRemaining > 0;
-  if (shouldDebug) idDebugRemaining--;
-
   const handlePath = extractYouTubeHandlePath(entry.url);
   if (!handlePath) {
-    if (shouldDebug) log(`[id-debug] ${entry.name}: handlePath çıkarılamadı (url=${entry.url})`);
     return null;
   }
 
   try {
     const res = await fetchWithTimeout(`https://www.youtube.com${handlePath}`);
-    if (shouldDebug) {
-      log(`[id-debug] ${entry.name}: https://www.youtube.com${handlePath} -> durum=${res.status}`);
-    }
     if (!res.ok) return null;
     const html = await res.text();
     // YouTube sayfa yapısını zaman zaman değiştiriyor (ör. yeni "WIZ" tabanlı
@@ -132,15 +115,7 @@ async function resolveChannelId(entry, cache) {
       cache[entry.url] = m[1];
       return m[1];
     }
-    if (shouldDebug) {
-      log(`[id-debug] ${entry.name}: sayfa geldi (uzunluk=${html.length}) ama channelId deseni bulunamadı`);
-      log(
-        `[id-debug] ${entry.name}: içerik ipuçları -> feeds/videos.xml=${html.includes("feeds/videos.xml")}, externalId=${html.includes("externalId")}, browseId=${html.includes("browseId")}, canonical=${html.includes('rel="canonical"')}`
-      );
-      log(`[id-debug] ilk 300 karakter: ${JSON.stringify(html.slice(0, 300))}`);
-    }
   } catch (err) {
-    if (shouldDebug) log(`[id-debug] ${entry.name}: istek hatası: ${err.message}`);
     log(`[youtube] channelId çözülemedi (${entry.name}):`, err.message);
   }
   return null;
@@ -179,22 +154,11 @@ export function parseLatestVideoFromXml(xml) {
 }
 
 async function checkYouTubeLive(channelId) {
-  // GEÇİCİ TEŞHİS: ilk birkaç kanal için NE OLURSA OLSUN (canlı/değil, hata/hatasız)
-  // en az bir log satırı basılır - önceki teşhis denemesi hiç tetiklenmediği için
-  // artık hiçbir dala bağlı olmayan, koşulsuz bir kayıt tutuyoruz.
-  const shouldDebug = ytDebugRemaining > 0;
-  if (shouldDebug) ytDebugRemaining--;
-
   try {
     const res = await fetchWithTimeout(
       `https://www.youtube.com/channel/${channelId}/live`,
       { redirect: "manual" }
     );
-    if (shouldDebug) {
-      log(
-        `[yt-debug] channelId=${channelId} ilkDurum=${res.status} location=${res.headers.get("location") || "(yok)"}`
-      );
-    }
     const parsed = parseLiveRedirect(res.status, res.headers.get("location") || "");
     // Canlı değilse profil fotoğrafını (avatar) da EK bir istek atmadan çıkarmaya
     // çalışıyoruz. Ama bu isteğin gövdesi her zaman kanalın kendi sayfası olmayabilir:
@@ -205,7 +169,6 @@ async function checkYouTubeLive(channelId) {
     let avatar = null;
     if (!parsed.live) {
       let html = "";
-      let debugStatus = res.status;
       try {
         if (res.status >= 300 && res.status < 400) {
           const location = res.headers.get("location");
@@ -214,44 +177,16 @@ async function checkYouTubeLive(channelId) {
             : `https://www.youtube.com/channel/${channelId}`;
           const res2 = await fetchWithTimeout(target);
           html = await res2.text();
-          debugStatus = res2.status;
         } else {
           html = await res.text();
         }
         avatar = parseChannelAvatar(html);
-      } catch (innerErr) {
-        if (shouldDebug) {
-          log(`[yt-debug] channelId=${channelId} gövde okunurken hata: ${innerErr.message}`);
-        }
+      } catch {
+        // gövde okunamadı -> avatar bulunamadı sayılır, script çökmez
       }
-
-      if (shouldDebug) {
-        log(
-          `[yt-debug] channelId=${channelId} sonDurum=${debugStatus} htmlUzunluk=${html.length} avatarBulundu=${!!avatar}`
-        );
-        if (!avatar) {
-          // Avatar hâlâ bulunamadıysa, sayfada hangi ipuçlarının olup olmadığını
-          // logluyoruz - bir sonraki düzeltmeyi kör denemeden yapabilmek için.
-          log(
-            `[yt-debug] channelId=${channelId} avatar ipuçları -> og:image=${html.includes("og:image")}, avatarViewModel=${html.includes("avatarViewModel")}, "avatar"=${html.includes('"avatar"')}, yt3.googleusercontent=${html.includes("yt3.googleusercontent.com")}`
-          );
-          const avatarIdx = html.search(/avatar/i);
-          if (avatarIdx >= 0) {
-            log(
-              `[yt-debug] channelId=${channelId} "avatar" çevresi: ${JSON.stringify(html.slice(Math.max(0, avatarIdx - 40), avatarIdx + 260))}`
-            );
-          }
-        }
-        log(`[yt-debug] ilk 300 karakter: ${JSON.stringify(html.slice(0, 300))}`);
-      }
-    } else if (shouldDebug) {
-      log(`[yt-debug] channelId=${channelId} canlı olarak algılandı, avatar denenmedi`);
     }
     return { ...parsed, avatar };
   } catch (err) {
-    if (shouldDebug) {
-      log(`[yt-debug] channelId=${channelId} DIŞ HATA: ${err.message} (${err.name})`);
-    }
     log(`[youtube] live kontrolü başarısız (${channelId}):`, err.message);
     return null; // bilinmiyor -> önceki durumu koru
   }
