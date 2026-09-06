@@ -204,14 +204,46 @@ async function checkYouTubeLive(channelId) {
       }
 
       if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-        const idx = html.indexOf('"isLiveNow"');
+        // 1. turda "hasLiveBadgeMarker: true" bulmuştuk (5 ayrı desenin OR'u),
+        // ama 2. turda bunlardan sadece "isLiveNow" alanını tek başına kontrol
+        // edince hiç bulunamadı -> demek ki eşleşen ASIL desen 5'ten biri
+        // olan diğerlerinden biriymiş. Bu sefer her birini AYRI AYRI
+        // raporluyoruz ki hangisi olduğunu kesin olarak görelim, ayrıca
+        // eşleşen ilk yerin etrafındaki metni ve hemen öncesindeki en yakın
+        // "videoId" değerini de (muhtemelen aynı kart/renderer'a ait olanı)
+        // yakalıyoruz.
+        const candidates = [
+          { key: "styleLive", re: /"style":"LIVE"/ },
+          { key: "labelCanli", re: /label":"[^"]*CANLI/i },
+          { key: "labelLive", re: /label":"[^"]*LIVE/i },
+          { key: "isLiveTrue", re: /"isLive":true/ },
+          { key: "isLiveNowTrue", re: /"isLiveNow":true/ },
+          { key: "badgeStyleLiveNow", re: /BADGE_STYLE_TYPE_LIVE_NOW/ },
+        ];
+        const found = {};
+        let firstMatchIdx = -1;
+        for (const c of candidates) {
+          const m = html.match(c.re);
+          found[c.key] = !!m;
+          if (m && (firstMatchIdx === -1 || html.indexOf(m[0]) < firstMatchIdx)) {
+            firstMatchIdx = html.indexOf(m[0]);
+          }
+        }
+        let contextSnippet = null;
+        let nearestVideoIdBefore = null;
+        if (firstMatchIdx >= 0) {
+          contextSnippet = html.slice(Math.max(0, firstMatchIdx - 250), firstMatchIdx + 100);
+          const before = html.slice(0, firstMatchIdx);
+          const vidMatches = [...before.matchAll(/"videoId":"([\w-]{11})"/g)];
+          nearestVideoIdBefore = vidMatches.length ? vidMatches[vidMatches.length - 1][1] : null;
+        }
         debug2 = {
           status: res.status,
           location: res.headers.get("location") || null,
           htmlLength: html.length,
-          hasIsLiveNowTrue: /"isLiveNow":true/.test(html),
-          hasIsLiveNowAnywhere: /"isLiveNow"/.test(html),
-          isLiveNowContext: idx >= 0 ? html.slice(Math.max(0, idx - 80), idx + 40) : null,
+          found,
+          contextSnippet,
+          nearestVideoIdBefore,
           canonicalLink: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] || null,
           parsedFromHtmlResult: parseLiveFromHtml(html),
         };
