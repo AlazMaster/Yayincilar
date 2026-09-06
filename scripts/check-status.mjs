@@ -159,6 +159,7 @@ export function parseLatestVideoFromXml(xml) {
 // için tek kanal için ham durumu status.json'a yazıyoruz. Doğrulanınca bu
 // blok (ve _liveDebug2 alanı main()'de) kaldırılacak.
 const DEBUG_LIVE_CHANNEL_ID = "UC2IhlhOhWkA8t_eLBmFVK-w";
+const DEBUG_KNOWN_LIVE_VIDEO_ID = "L64pOwPX3jM";
 
 async function checkYouTubeLive(channelId) {
   try {
@@ -204,46 +205,26 @@ async function checkYouTubeLive(channelId) {
       }
 
       if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-        // 1. turda "hasLiveBadgeMarker: true" bulmuştuk (5 ayrı desenin OR'u),
-        // ama 2. turda bunlardan sadece "isLiveNow" alanını tek başına kontrol
-        // edince hiç bulunamadı -> demek ki eşleşen ASIL desen 5'ten biri
-        // olan diğerlerinden biriymiş. Bu sefer her birini AYRI AYRI
-        // raporluyoruz ki hangisi olduğunu kesin olarak görelim, ayrıca
-        // eşleşen ilk yerin etrafındaki metni ve hemen öncesindeki en yakın
-        // "videoId" değerini de (muhtemelen aynı kart/renderer'a ait olanı)
-        // yakalıyoruz.
-        const candidates = [
-          { key: "styleLive", re: /"style":"LIVE"/ },
-          { key: "labelCanli", re: /label":"[^"]*CANLI/i },
-          { key: "labelLive", re: /label":"[^"]*LIVE/i },
-          { key: "isLiveTrue", re: /"isLive":true/ },
-          { key: "isLiveNowTrue", re: /"isLiveNow":true/ },
-          { key: "badgeStyleLiveNow", re: /BADGE_STYLE_TYPE_LIVE_NOW/ },
-        ];
-        const found = {};
-        let firstMatchIdx = -1;
-        for (const c of candidates) {
-          const m = html.match(c.re);
-          found[c.key] = !!m;
-          if (m && (firstMatchIdx === -1 || html.indexOf(m[0]) < firstMatchIdx)) {
-            firstMatchIdx = html.indexOf(m[0]);
-          }
-        }
-        let contextSnippet = null;
-        let nearestVideoIdBefore = null;
-        if (firstMatchIdx >= 0) {
-          contextSnippet = html.slice(Math.max(0, firstMatchIdx - 250), firstMatchIdx + 100);
-          const before = html.slice(0, firstMatchIdx);
-          const vidMatches = [...before.matchAll(/"videoId":"([\w-]{11})"/g)];
-          nearestVideoIdBefore = vidMatches.length ? vidMatches[vidMatches.length - 1][1] : null;
+        // 3. tur: "labelLive" eşleşmesi sahte çıktı - "PLAYER_LIVE_LABEL":"Live"
+        // gibi her sayfada bulunan, oynatıcı arayüzünün genel çeviri metniymiş,
+        // canlı yayınla ilgisi yok. Bu sefer dolaylı desenlerle uğraşmak yerine
+        // KULLANICININ DOĞRULADIĞI gerçek canlı videoId'sini
+        // (DEBUG_KNOWN_LIVE_VIDEO_ID, "L64pOwPX3jM") sayfada nerede/nasıl
+        // geçtiğine doğrudan bakıyoruz: her geçtiği yerin 200 karakter
+        // öncesi/sonrasını görürsek, YouTube'un bu videoyu canlı olarak
+        // işaretlediği gerçek JSON alanını gözle görebiliriz.
+        const occurrences = [];
+        const re = new RegExp(DEBUG_KNOWN_LIVE_VIDEO_ID, "g");
+        let m;
+        while ((m = re.exec(html)) && occurrences.length < 8) {
+          occurrences.push(html.slice(Math.max(0, m.index - 200), m.index + 200));
         }
         debug2 = {
           status: res.status,
           location: res.headers.get("location") || null,
           htmlLength: html.length,
-          found,
-          contextSnippet,
-          nearestVideoIdBefore,
+          knownLiveVideoIdOccurrenceCount: occurrences.length,
+          knownLiveVideoIdContexts: occurrences,
           canonicalLink: html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] || null,
           parsedFromHtmlResult: parseLiveFromHtml(html),
         };
