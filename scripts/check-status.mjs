@@ -179,12 +179,6 @@ export function parseLatestVideoFromXml(xml) {
 // zaten bildiğimiz en son videonun kendi izleme sayfası hem canlı durumunu
 // hem avatarı verir, /live adresine ayrıca gitmiyoruz. /live'a sadece hiç
 // video bilgisi olmayan (RSS'i boş/başarısız) kanallar için düşüyoruz.
-//
-// GEÇİCİ TEŞHİS (5. tur): TalkativeKo örneğiyle, istek artık başarıyla
-// geçiyor (429 çözüldü) ama yine de canlı bulunamıyor. videoDetails/
-// microformat objelerinin TAMAMINI görüp gerçek alan adını bulacağız.
-const DEBUG_LIVE_CHANNEL_ID = "UCsRm9uJMLwQ05dQo0BYSCEg";
-
 async function checkYouTubeLive(channelId, latestVideoId) {
   try {
     if (latestVideoId) {
@@ -200,22 +194,7 @@ async function checkYouTubeLive(channelId, latestVideoId) {
       const watchHtml = await watchRes.text();
       const parsed = parseLiveFromHtml(watchHtml);
       const avatar = parseChannelAvatar(watchHtml);
-
-      let debug5 = null;
-      if (channelId === DEBUG_LIVE_CHANNEL_ID) {
-        // 5. tur teşhis: istek artık başarıyla geçiyor (429 yok) ama yine de
-        // canlı bulunamıyor. Tahmin etmek yerine videoDetails/microformat
-        // objelerinin TAMAMINI olduğu gibi döküyoruz ki YouTube'un güncel
-        // şemasında "şu an canlı" bilgisini GERÇEKTE hangi alanın taşıdığını
-        // gözle görelim.
-        debug5 = {
-          videoDetails: extractJsonValueAfterKey(watchHtml, '"videoDetails":'),
-          microformat: extractJsonValueAfterKey(watchHtml, '"playerMicroformatRenderer":'),
-          hasActiveLiveChat: /"activeLiveChatId"/.test(watchHtml),
-          hasLiveChatRenderer: /"liveChatRenderer"/.test(watchHtml),
-        };
-      }
-      return { ...parsed, avatar, debug5 };
+      return { ...parsed, avatar };
     }
 
     // latestVideoId yoksa (ör. RSS okunamadı ya da kanalın hiç videosu yok)
@@ -327,17 +306,32 @@ export function extractJsonValueAfterKey(text, keyLiteral) {
 export function parseLiveFromHtml(html) {
   if (!html) return { live: false, videoId: null };
 
-  const videoDetails = extractJsonValueAfterKey(html, '"videoDetails":');
-  const microformat = extractJsonValueAfterKey(html, '"playerMicroformatRenderer":');
-
-  const isLive =
-    videoDetails?.isLive === true || microformat?.liveBroadcastDetails?.isLiveNow === true;
+  // GERÇEK VERİYLE DOĞRULANDI (2026-09-06, TalkativeKo örneği): sayfada
+  // "videoDetails" metni BİRDEN FAZLA yerde geçiyor - bunlardan ilki (ve bu
+  // yüzden extractJsonValueAfterKey'in yakaladığı) aslında oynatıcının üst
+  // bilgi kutusuna ait küçük bir UI nesnesi (playerOverlayVideoDetailsRenderer),
+  // asıl ytInitialPlayerResponse.videoDetails DEĞİL; "microformat" da bu
+  // sayfa türünde hiç bulunmuyordu. Yani "isLive"/"isLiveNow" alanlarına
+  // güvenmek (önceki 2 deneme) hep başarısız oldu.
+  //
+  // Bunun yerine GÖZLE GÖRÜLEN, çok daha güvenilir bir işarete geçiyoruz:
+  // YouTube, izleyici sayısını SADECE o an gerçekten canlı olan videolarda
+  // "X watching now" ("X kişi izliyor") şeklinde gösteriyor; bitmiş/normal
+  // videolarda bunun yerine "X views" yazıyor. Bu metin, oynatıcının hemen
+  // altındaki başlık/alt başlık kutusunda (playerOverlayVideoDetailsRenderer.
+  // subtitle) gerçek zamanlı render ediliyor ve doğrudan üretim verisiyle
+  // (29 watching now) doğrulandı.
+  const isLive = /watching now/i.test(html);
 
   if (!isLive) return { live: false, videoId: null };
 
+  // Kendi videoId'sini kanonik linkten alıyoruz - sayfa zaten kendi
+  // watch?v=... adresine ait olduğu için bu her zaman doğru videoId'yi
+  // verir (JSON içindeki ilk "videoId" alanına güvenmekten daha sağlam,
+  // o alan alakasız/önerilen bir videoya da ait olabilir).
   const videoId =
-    videoDetails?.videoId ||
     html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/)?.[1] ||
+    html.match(/"videoId":"([\w-]{11})"/)?.[1] ||
     null;
   return { live: true, videoId };
 }
@@ -486,7 +480,6 @@ async function processYouTubeEntry(entry, cache) {
     thumbnail: latest?.thumbnail || null,
     publishedAt: latest?.publishedAt || null,
     avatar: liveInfo?.avatar || null,
-    _liveDebug5: liveInfo?.debug5 || null,
   };
 }
 
@@ -552,7 +545,6 @@ async function main() {
       // platform ikonuna geri düşer).
       avatar: r.avatar ?? before?.avatar ?? null,
       checkedAt: new Date().toISOString(),
-      ...(r._liveDebug5 ? { _liveDebug5: r._liveDebug5 } : {}),
     };
 
     if (!isFirstRun) {
