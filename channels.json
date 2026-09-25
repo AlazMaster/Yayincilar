@@ -6,17 +6,67 @@
       "platform": "YouTube"
     },
     {
-      "name": "Mukmir",
-      "url": "https://www.youtube.com/@Mukmirr",
+      "name": "wMadLife",
+      "url": "https://www.youtube.com/@wMadLiFe",
       "platform": "YouTube"
     },
     {
-      "name": "Talkative KO",
-      "url": "https://www.youtube.com/@TalkativeKo/streams",
+      "name": "w4vn1",
+      "url": "https://www.youtube.com/@w4vn1",
+      "platform": "YouTube"
+    },
+    {
+      "name": "TheConJurinG",
+      "url": "https://www.youtube.com/@TheConJurinGDEATHKO",
+      "platform": "YouTube"
+    },
+    {
+      "name": "Faca",
+      "url": "https://www.youtube.com/@Facanaland%C4%B1nMRKBERKEATLIG",
+      "platform": "YouTube"
+    },
+    {
+      "name": "Metehan",
+      "url": "https://www.youtube.com/@MetehanKervanc%C4%B1o%C4%9Flu",
       "platform": "YouTube"
     }
   ],
   "kick": [
+    {
+      "name": "ZarkOFFF",
+      "url": "https://kick.com/zarkofff",
+      "platform": "Kick"
+    },
+    {
+      "name": "FlyingDagger",
+      "url": "https://kick.com/flyingdagger",
+      "platform": "Kick"
+    },
+    {
+      "name": "HakimC4N",
+      "url": "https://kick.com/hakimc4n",
+      "platform": "Kick"
+    },
+    {
+      "name": "SexMachinee",
+      "url": "https://kick.com/seximachinee",
+      "platform": "Kick"
+    },
+    {
+      "name": "UlumanituKanwulFF",
+      "url": "https://kick.com/ulumanitukanwulff",
+      "platform": "Kick"
+    },
+    {
+      "name": "iKomutanLogar",
+      "url": "https://kick.com/ikomutanlogar",
+      "platform": "Kick"
+    },
+    {
+      "name": "IRONMantv",
+      "url": "https://kick.com/ironmantv",
+      "platform": "Kick"
+    },
     {
       "name": "KutluB1lge",
       "url": "https://kick.com/kutlub1lge",
