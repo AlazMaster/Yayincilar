@@ -176,13 +176,71 @@ function renderAll() {
   updateLiveLine();
 }
 
+// KICK CANLI KONTROLÜ (tarayıcıdan):
+// Kick, GitHub Actions sunucularından gelen istekleri engellemeye başladı
+// (2026-09-25'te doğrulandı: aynı istek normal bir bilgisayardan cevap
+// veriyor, Actions'tan hiçbir Kick kanalı için veri gelmiyor). Kick'in kanal
+// API'si tarayıcıdan (CORS ile) okunabildiği için Kick kanallarının canlı
+// durumunu artık ziyaretçinin tarayıcısı doğrudan soruyor. Her ziyaretçi
+// kendi IP'sinden, dakikada bir, kanal başına tek istek atıyor.
+// Kontrol başarısız olursa status.json'daki bilgiye düşülür.
+let kickLive = {};
+
+async function checkKickChannel(channel) {
+  let slug = null;
+  try {
+    slug = new URL(channel.url).pathname.split("/").filter(Boolean)[0]?.toLowerCase();
+  } catch {}
+  if (!slug) return null;
+  try {
+    const res = await fetch(`https://kick.com/api/v2/channels/${slug}`, {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return {
+      live: !!data?.livestream && data.livestream.is_live !== false,
+      avatar: data?.user?.profile_pic || null,
+      videoTitle: data?.livestream?.session_title || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function refreshKickLive() {
+  const kickChannels = channelsData?.kick || [];
+  const results = await Promise.all(kickChannels.map((c) => checkKickChannel(c)));
+  kickChannels.forEach((c, i) => {
+    if (results[i]) kickLive[c.url] = results[i];
+  });
+}
+
+function mergeKickLive() {
+  for (const [url, info] of Object.entries(kickLive)) {
+    const prev = statusData[url] || {};
+    statusData[url] = {
+      ...prev,
+      live: info.live,
+      avatar: info.avatar || prev.avatar || null,
+      videoTitle: info.videoTitle || prev.videoTitle || null,
+    };
+  }
+}
+
 async function refreshStatus() {
+  const kickPromise = refreshKickLive().catch(() => {});
   try {
     statusData = await loadJson("status.json");
   } catch (err) {
     console.warn("status.json okunamadı, rozetler olmadan devam ediliyor:", err.message);
     statusData = statusData || {};
   }
+  mergeKickLive(); // bir önceki Kick sonucunu hemen uygula (rozet yanıp sönmesin)
+  renderAll();
+  await kickPromise;
+  mergeKickLive();
   renderAll();
 }
 

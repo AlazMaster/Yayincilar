@@ -1,0 +1,801 @@
+/* ==========================================================================
+   TOKENS — lifted from the supplied Resend style reference: pure black
+   canvas, hairline graphite borders, ghost buttons only, one violet accent
+   reserved for code/identifier strings. A third visual variant of the
+   DeathKO Prime XL site — content and structure carry over, the skin does
+   not.
+   ========================================================================== */
+:root{
+  /* Colors */
+  --color-void: #000000;
+  --color-hairline: #292d30;
+  --color-white: #ffffff;
+  --color-bone: #f0f0f0;
+  --color-ash: #a1a4a5;
+  --color-smoke: #abafb4;
+  --color-iron: #6e727a;
+  --color-charcoal: #464a4d;
+  --color-violet: #9281f7;
+  --color-violet-glow: #baa7ff;
+  --color-blue: #3b9eff;
+  --color-sky: #70b8ff;
+  --color-green: #3ad389;
+  --color-red: #ff9592;
+  --color-amber: #ffca16;
+  --surface-lift: #0b0e14;
+  --gradient-violet: linear-gradient(135deg, #9281f7 0%, #9a54dc 100%);
+  --gradient-surface: linear-gradient(180deg, #161616 0%, #030303 100%);
+  --shadow-subtle: 0 0 0 1px rgba(176, 199, 217, 0.145);
+
+  /* Typography */
+  --font-domaine: 'Playfair Display', Georgia, 'Iowan Old Style', serif; /* Domaine substitute */
+  --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif; /* aBC Favorit substitute */
+  --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; /* Commit Mono substitute */
+
+  --text-caption: 12px;
+  --text-body-sm: 14px;
+  --text-body: 16px;
+  --text-subheading: 20px;
+  --text-heading-sm: 24px;
+  --text-heading: 56px;
+  --text-heading-lg: 77px;
+  --text-display: 96px;
+
+  /* Spacing (4px base unit) */
+  --sp-4: 4px; --sp-8: 8px; --sp-12: 12px; --sp-16: 16px; --sp-20: 20px;
+  --sp-24: 24px; --sp-32: 32px; --sp-40: 40px; --sp-48: 48px; --sp-64: 64px;
+  --sp-80: 80px; --sp-96: 96px;
+  --section-gap: 56px;
+  --card-padding: 24px;
+
+  /* Shapes — two radii only: 6px chrome, 16px surfaces (24px large panels) */
+  --radius-chrome: 6px;
+  --radius-card: 16px;
+  --radius-panel: 24px;
+  --radius-pill: 9999px;
+
+  --page-max-width: 1200px;
+}
+
+/* ==========================================================================
+   RESET & BASE
+   ========================================================================== */
+*,*::before,*::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *,*::before,*::after{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+body{
+  margin: 0;
+  background: var(--color-void);
+  color: var(--color-bone);
+  font-family: var(--font-inter);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img{ max-width: 100%; display: block; }
+h1,h2,h3,h4{ font-family: var(--font-heading); margin: 0; font-weight: 400; }
+p{ margin: 0; }
+a{ color: inherit; }
+ul{ margin: 0; padding: 0; list-style: none; }
+button{ font-family: inherit; }
+:focus-visible{ outline: 2px solid var(--color-blue); outline-offset: 2px; }
+
+.wrap{ max-width: var(--page-max-width); margin: 0 auto; padding: 0 clamp(20px, 5cqw, 40px); }
+.text-col{ max-width: 720px; margin: 0 auto; }
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.03em;
+  color: var(--color-ash);
+}
+section{ scroll-margin-top: 64px; }
+
+/* ==========================================================================
+   HEADER — transparent bar on black, blur instead of border
+   ========================================================================== */
+.site-header{
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(0,0,0,0.86);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-hairline);
+}
+.site-header .wrap{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 64px;
+}
+.brand{ display: flex; align-items: center; text-decoration: none; color: var(--color-white); }
+.brand img{ height: 58px; width: auto; }
+
+/* Home page header logo — premium glow/shimmer treatment. Scoped to
+   .brand-premium (index.html only) so other pages' headers stay plain. */
+.brand-premium img{
+  filter:
+    drop-shadow(0 0 5px rgba(255,205,120,0.5))
+    drop-shadow(0 0 13px rgba(255,175,80,0.3))
+    brightness(1.03);
+  animation: brandGlowPulse 3.4s ease-in-out infinite;
+  transition: filter .2s ease;
+}
+.brand-premium:hover img{
+  filter:
+    drop-shadow(0 0 8px rgba(255,210,130,0.8))
+    drop-shadow(0 0 20px rgba(255,180,90,0.55))
+    brightness(1.08);
+}
+@keyframes brandGlowPulse{
+  0%, 100%{
+    filter:
+      drop-shadow(0 0 5px rgba(255,205,120,0.42))
+      drop-shadow(0 0 12px rgba(255,175,80,0.24))
+      brightness(1.02);
+  }
+  50%{
+    filter:
+      drop-shadow(0 0 9px rgba(255,213,135,0.85))
+      drop-shadow(0 0 22px rgba(255,183,95,0.5))
+      brightness(1.1);
+  }
+}
+@media (prefers-reduced-motion: reduce){
+  .brand-premium img{ animation: none; filter: drop-shadow(0 0 7px rgba(255,205,120,0.5)) brightness(1.04); }
+}
+nav.primary-nav{ display: flex; align-items: center; gap: 28px; }
+nav.primary-nav a{
+  text-decoration: none;
+  font-size: var(--text-body-sm);
+  font-weight: 400;
+  color: var(--color-bone);
+  transition: color .15s ease;
+}
+nav.primary-nav a:hover, nav.primary-nav a:focus-visible{ color: var(--color-white); }
+nav.primary-nav a[aria-current="page"]{ color: var(--color-white); }
+.header-actions{ display: flex; align-items: center; gap: 14px; }
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-chrome);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--color-hairline);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+  white-space: nowrap;
+}
+.btn:hover{ border-color: var(--color-white); }
+.btn-primary{ color: var(--color-white); }
+.btn-ghost{ color: var(--color-ash); border-color: var(--color-iron); }
+.btn-ghost:hover{ color: var(--color-bone); border-color: var(--color-smoke); }
+.btn-large{ padding: 12px 20px; font-size: var(--text-body-sm); }
+.btn-small{ padding: 8px 14px; font-size: var(--text-caption); }
+.nav-cta-mobile{ display: none; }
+
+.nav-toggle{
+  display: none;
+  background: none;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-chrome);
+  width: 36px; height: 36px;
+  align-items: center; justify-content: center;
+  color: var(--color-bone);
+  cursor: pointer;
+}
+.nav-toggle svg{ width: 16px; height: 16px; }
+
+@container phone (max-width: 860px){
+  nav.primary-nav{
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: var(--color-void);
+    border-bottom: 1px solid var(--color-hairline);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px clamp(20px,5cqw,40px) 24px;
+    gap: 16px;
+    display: none;
+  }
+  nav.primary-nav.open{ display: flex; }
+  nav.primary-nav a{ font-size: var(--text-body); }
+  .header-actions .btn-ghost{ display: none; }
+  .nav-toggle{ display: inline-flex; }
+  .nav-cta-mobile{ display: inline-flex; margin-top: 6px; }
+}
+
+/* ==========================================================================
+   HERO — anti-decorative: flat black, serif display headline, no gradient
+   ========================================================================== */
+.hero{ padding: clamp(20px, 3cqw, 32px) 0 clamp(32px, 4cqw, 48px); text-align: center; }
+.hero .wrap{ display: flex; flex-direction: column; align-items: center; }
+.btn .chevron{ display: inline-block; color: var(--color-violet-glow); transition: transform .15s ease; }
+.btn:hover .chevron{ transform: translateX(3px); }
+.hero-tagline{
+  font-family: var(--font-domaine);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5.5cqw, 72px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--color-white);
+  max-width: 760px;
+}
+.hero-sub{
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+  margin-top: var(--sp-12);
+}
+.hero-lead{
+  max-width: 480px;
+  margin: var(--sp-8) auto 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-ash);
+  line-height: 1.6;
+}
+.hero-cta{ display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-12); margin-top: var(--sp-24); }
+.hero-object{
+  position: relative;
+  margin-top: var(--sp-40);
+  padding: var(--sp-24);
+  border: 1px solid rgba(255,205,130,0.28);
+  border-radius: var(--radius-panel);
+  background:
+    radial-gradient(120% 140% at 50% 12%, rgba(255,197,102,0.16), transparent 62%),
+    var(--color-void);
+  width: clamp(260px, 30cqw, 400px);
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    0 0 80px -14px rgba(255,175,80,0.38),
+    0 30px 70px -25px rgba(0,0,0,0.85);
+}
+.hero-object::before{
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: radial-gradient(closest-side, rgba(255,190,90,0.24), transparent 70%);
+  animation: heroGlowPulse 5s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-object::after{
+  content: "";
+  position: absolute;
+  top: 0; left: -160%;
+  width: 55%; height: 100%;
+  background: linear-gradient(75deg, transparent, rgba(255,255,255,0.30), transparent);
+  transform: skewX(-20deg);
+  animation: heroShimmer 6s ease-in-out infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+.hero-logo{ position: relative; z-index: 1; display: block; width: 100%; }
+@keyframes heroGlowPulse{
+  0%, 100%{ opacity: .55; transform: scale(1); }
+  50%{ opacity: 1; transform: scale(1.08); }
+}
+@keyframes heroShimmer{
+  0%, 15%{ left: -160%; }
+  55%{ left: 160%; }
+  100%{ left: 160%; }
+}
+@media (prefers-reduced-motion: reduce){
+  .hero-object::before{ animation: none; opacity: .7; }
+  .hero-object::after{ display: none; }
+}
+
+/* ==========================================================================
+   PAGE HEADER
+   ========================================================================== */
+.page-header{ padding: clamp(32px, 5cqw, 44px) 0 clamp(20px, 3cqw, 28px); text-align: center; border-bottom: 1px solid var(--color-hairline); }
+.page-header h1{
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3.6cqw, 36px);
+  letter-spacing: -0.02em;
+  margin-top: var(--sp-8);
+  color: var(--color-white);
+}
+.page-header p{
+  max-width: 520px;
+  margin: var(--sp-12) auto 0;
+  color: var(--color-ash);
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   SHARED SECTION STYLES
+   ========================================================================== */
+.section{ padding: var(--section-gap) 0; }
+.section-head{ max-width: 560px; margin: 0 auto var(--sp-24); text-align: center; }
+.section-head h2{
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3.6cqw, 36px);
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+}
+.section-head p{ margin-top: var(--sp-12); color: var(--color-ash); font-size: var(--text-body); line-height: 1.5; }
+
+/* ==========================================================================
+   TERMINAL PANEL — the repeating "list of items" pattern (Program platforms,
+   Kriterler criteria, Süreç steps): one bordered
+   16px-radius panel on the black canvas, hairline-divided rows inside,
+   mirroring the reference's code-block / terminal-window component.
+   ========================================================================== */
+.term-panel{
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--gradient-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.term-row{
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-16);
+  padding: var(--sp-16) var(--card-padding);
+  border-top: 1px solid var(--color-hairline);
+  transition: background .15s ease;
+}
+.term-row:first-child{ border-top: none; }
+.term-row:hover{ background: rgba(255,255,255,0.02); }
+.term-row .num{
+  flex: none;
+  width: 30px;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  color: var(--color-violet);
+  padding-top: 2px;
+}
+/* Icon Container — per reference: the one chromatic surface allowed on
+   the page. 16px radius (the card radius, never a third value), violet→
+   magenta gradient fill, white stroke icon, a 1px cool-white ring instead
+   of a shadow. */
+.term-row .icon{
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: var(--radius-card);
+  background: var(--gradient-violet);
+  color: var(--color-white);
+  box-shadow: var(--shadow-subtle);
+  transition: transform .15s ease;
+}
+.term-row:hover .icon{ transform: translateY(-1px); }
+.term-row .icon svg{ width: 17px; height: 17px; }
+/* Platform brand badges (Program page) — each logo keeps its own real
+   brand color instead of the shared violet accent, so they read as
+   actual recognizable platforms rather than a generic icon set. */
+.term-row .icon.icon-youtube{ background: #FF0000; }
+.term-row .icon.icon-kick{ background: #53FC18; color: #0a0a0a; }
+.term-row .icon.icon-instagram{ background: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%); }
+.term-row .icon.icon-facebook{ background: #1877F2; }
+
+/* Süreç page — icon chips use the site's amber accent instead of the
+   shared violet gradient, so this page reads distinctly from the rest. */
+.term-panel-surec .term-row .icon{
+  background: linear-gradient(135deg, #ffca16 0%, #c97a1e 100%);
+  color: var(--color-void);
+}
+.term-row .body{ flex: 1; padding-top: 2px; }
+.term-row .body h3{
+  font-family: var(--font-inter);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-white);
+  margin-bottom: 3px;
+}
+.term-row .body p{ font-size: var(--text-body-sm); color: var(--color-ash); line-height: 1.55; }
+.term-row .role{
+  flex: none;
+  margin-left: auto;
+  padding-left: var(--sp-12);
+  padding-top: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--color-ash);
+  text-align: right;
+  align-self: center;
+  white-space: nowrap;
+}
+@container phone (max-width: 560px){
+  .term-row{ flex-wrap: wrap; row-gap: 4px; padding: var(--sp-20); }
+  .term-row .role{ flex-basis: 100%; margin-left: 46px; text-align: left; white-space: normal; }
+}
+
+/* Program page platform table — narrower column that lines up with the
+   text above it (page unity), tighter row rhythm, and a touch more
+   premium depth: an inner top highlight plus a soft ambient shadow. */
+.term-panel-premium{
+  max-width: 560px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 24px 60px -28px rgba(0,0,0,0.85),
+    0 0 50px -26px rgba(146,129,247,0.20);
+}
+.term-panel-premium .term-row{
+  padding: var(--sp-12) 22px;
+  gap: var(--sp-12);
+  border-top-color: rgba(255,255,255,0.07);
+}
+.term-panel-premium .term-row .icon{ width: 34px; height: 34px; }
+.term-panel-premium .term-row .icon svg{ width: 15px; height: 15px; }
+
+.note-callout{
+  max-width: 860px;
+  margin: var(--sp-20) auto 0;
+  padding: var(--sp-12) var(--sp-16);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-chrome);
+  color: var(--color-ash);
+  font-size: var(--text-body-sm);
+}
+.note-callout strong{ color: var(--color-bone); font-family: var(--font-mono); font-weight: 400; }
+
+.cta-row{ display: flex; justify-content: center; margin-top: var(--sp-32); }
+
+/* ==========================================================================
+   TYPOGRAPHY-ONLY CTA BLOCK
+   ========================================================================== */
+.cta-block{ text-align: center; padding: clamp(40px, 6cqw, 56px) 0; border-top: 1px solid var(--color-hairline); }
+.cta-block h2{
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3.6cqw, 36px);
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+}
+.cta-block p{ max-width: 460px; margin: var(--sp-12) auto 0; font-size: var(--text-body); color: var(--color-ash); line-height: 1.5; }
+.cta-block .hero-cta{ margin-top: var(--sp-24); }
+
+/* ==========================================================================
+   FORM
+   ========================================================================== */
+.form-shell{ max-width: 760px; margin: 0 auto; }
+.form-status{
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  margin-bottom: var(--sp-24);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--color-ash);
+}
+.form-status .dot{ width: 6px; height: 6px; border-radius: 50%; background: var(--color-green); }
+
+.field-group{ margin-bottom: var(--sp-32); }
+.field-group:last-of-type{ margin-bottom: 0; }
+.field-group-title{
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.04em;
+  color: var(--color-bone);
+  margin-bottom: var(--sp-16);
+  padding-bottom: var(--sp-8);
+  border-bottom: 1px solid var(--color-hairline);
+}
+.field-row{ display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-20); }
+.field{ display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--sp-20); }
+.field.full{ grid-column: 1 / -1; }
+.field label{ font-size: var(--text-body-sm); font-weight: 500; color: var(--color-bone); }
+.field .hint{ font-size: var(--text-caption); color: var(--color-ash); }
+
+/* Prominent inline notice inside a field-group (e.g. "at least one
+   platform link is required") — violet accent so it reads as important
+   without the weight of a full note-callout. */
+.platform-hint{
+  margin: 0 0 var(--sp-20);
+  padding: var(--sp-12) var(--sp-16);
+  border: 1px solid rgba(146,129,247,0.32);
+  border-left: 3px solid var(--color-violet);
+  border-radius: var(--radius-chrome);
+  background: rgba(146,129,247,0.08);
+  color: var(--color-bone);
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+}
+.platform-hint strong{ color: var(--color-white); font-weight: 600; }
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="url"],
+.field input[type="number"],
+.field select,
+.field textarea{
+  font-family: var(--font-inter);
+  font-size: var(--text-body);
+  padding: 11px 14px;
+  border-radius: var(--radius-chrome);
+  border: 1px solid var(--color-hairline);
+  background: var(--color-void);
+  color: var(--color-bone);
+  width: 100%;
+}
+.field textarea{ resize: vertical; min-height: 96px; line-height: 1.55; }
+.field input:focus, .field select:focus, .field textarea:focus{
+  outline: none;
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 3px rgba(59,158,255,0.18);
+}
+
+.platform-row{
+  display: grid;
+  grid-template-columns: 100px 1.6fr 1fr;
+  gap: var(--sp-12);
+  align-items: end;
+  padding: var(--sp-16) 0;
+  border-bottom: 1px solid var(--color-hairline);
+}
+.platform-row:last-child{ border-bottom: none; }
+.platform-row .platform-tag{ font-family: var(--font-mono); font-size: var(--text-body-sm); padding-bottom: 12px; color: var(--color-bone); }
+.platform-row .field{ margin-bottom: 0; }
+@container phone (max-width: 640px){
+  .platform-row{ grid-template-columns: 1fr; }
+  .platform-row .platform-tag{ padding-bottom: 4px; }
+}
+
+.checkbox-field{ display: flex; align-items: flex-start; gap: var(--sp-12); padding: var(--sp-12) 0; }
+.checkbox-field input{ margin-top: 3px; width: 16px; height: 16px; accent-color: var(--color-blue); flex-shrink: 0; }
+.checkbox-field label{ font-size: var(--text-body-sm); color: var(--color-ash); line-height: 1.55; }
+
+.form-footer{ display: flex; align-items: center; justify-content: space-between; gap: var(--sp-20); margin-top: var(--sp-12); flex-wrap: wrap; }
+.form-footer .fine-print{ font-size: var(--text-caption); color: var(--color-iron); max-width: 380px; }
+
+.form-success{ display: none; text-align: center; padding: var(--sp-40) var(--sp-20); }
+.form-success.show{ display: block; }
+.form-success .crest-small{ width: 52px; height: 52px; margin: 0 auto var(--sp-20); }
+.form-success h3{ font-family: var(--font-heading); font-size: var(--text-heading-sm); margin-bottom: var(--sp-12); color: var(--color-white); }
+.form-success p{ color: var(--color-ash); max-width: 440px; margin: 0 auto; line-height: 1.6; }
+.form-success .btn{ margin-top: var(--sp-24); display: inline-flex; }
+#basvuruForm.hide{ display: none; }
+
+/* ==========================================================================
+   FOOTER — intentionally minimal: no logo block, one row of links
+   ========================================================================== */
+.site-footer{ border-top: 1px solid var(--color-hairline); padding: var(--sp-32) 0; }
+.footer-links{ display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-20); margin-bottom: var(--sp-16); }
+.footer-links a{ font-size: var(--text-body-sm); color: var(--color-ash); text-decoration: none; transition: color .15s ease; }
+.footer-links a:hover{ color: var(--color-white); }
+.footer-social{ display: flex; justify-content: center; gap: var(--sp-16); margin-bottom: var(--sp-16); }
+.footer-social a{ display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--color-hairline); color: var(--color-iron); transition: color .15s ease, border-color .15s ease; }
+.footer-social a:hover{ color: var(--color-bone); border-color: var(--color-smoke); }
+.footer-social svg{ width: 14px; height: 14px; }
+.footer-bottom{ display: flex; justify-content: center; font-size: var(--text-caption); color: var(--color-iron); }
+
+@container phone (max-width: 860px){
+  .field-row{ grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   SITE SCOPE — a query container spanning the whole page (container-name
+   "phone" — a holdover from an earlier device-frame concept that's since
+   been dropped; the name stays so every cqw/@container rule above needs
+   no changes). Purely structural, no visual styling of its own.
+   ========================================================================== */
+.site-scope{
+  width: 100%;
+  container-type: inline-size;
+  container-name: phone;
+}
+
+/* ==========================================================================
+   BOOT SEQUENCE — a terminal-style "system boot" that plays once per
+   browser session (sessionStorage-gated), before the site reveals itself.
+   Fixed, full-viewport overlay. The keyframe below is a pure-CSS no-JS
+   fallback: if fx.js never runs, the overlay still auto-dismisses on its
+   own after a few seconds. Once JS runs it immediately cancels the
+   keyframe and takes over via the .boot-done class instead.
+   ========================================================================== */
+.boot-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-void);
+  padding: var(--sp-24);
+  animation: bootAutoHide 4.5s ease forwards;
+}
+@keyframes bootAutoHide{
+  0%, 90%{ opacity: 1; }
+  100%{ opacity: 0; }
+}
+.boot-overlay.boot-done{
+  animation: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .6s ease;
+}
+html.dko-skip-boot .boot-overlay{ display: none; }
+.boot-lines{
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  color: var(--color-smoke);
+  width: min(360px, 100%);
+}
+.boot-line{
+  min-height: 1.6em;
+  margin-bottom: 7px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.boot-line.boot-active::after{
+  content: "";
+  display: inline-block;
+  width: 7px; height: 1em;
+  margin-left: 2px;
+  background: var(--color-violet);
+  vertical-align: -2px;
+  animation: bootCursor 0.9s steps(1) infinite;
+}
+@keyframes bootCursor{ 50%{ opacity: 0; } }
+.boot-skip{
+  position: absolute;
+  bottom: var(--sp-20);
+  left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--color-charcoal);
+}
+@media (prefers-reduced-motion: reduce){
+  .boot-overlay{ animation: none; opacity: 0; display: none; }
+}
+
+/* ==========================================================================
+   SCROLL REVEAL — elements fade/rise into view as the page scrolls past
+   them (IntersectionObserver-driven; see fx.js). Falls back to fully
+   visible, un-animated content if JS or IntersectionObserver is missing.
+   ========================================================================== */
+.reveal{
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1);
+}
+.reveal.is-visible{ opacity: 1; transform: none; }
+.reveal-stagger > *{
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal-stagger.is-visible > *{ opacity: 1; transform: none; }
+.reveal-stagger.is-visible > *:nth-child(1){ transition-delay: .04s; }
+.reveal-stagger.is-visible > *:nth-child(2){ transition-delay: .11s; }
+.reveal-stagger.is-visible > *:nth-child(3){ transition-delay: .18s; }
+.reveal-stagger.is-visible > *:nth-child(4){ transition-delay: .25s; }
+.reveal-stagger.is-visible > *:nth-child(5){ transition-delay: .32s; }
+.reveal-stagger.is-visible > *:nth-child(6){ transition-delay: .39s; }
+@media (prefers-reduced-motion: reduce){
+  .reveal, .reveal-stagger > *{ opacity: 1; transform: none; transition: none; }
+}
+
+/* ==========================================================================
+   AMBIENT PARTICLES — a quiet canvas of drifting violet embers, fixed to
+   the viewport and drifting behind the content. Dropped on small screens
+   and under reduced-motion.
+   ========================================================================== */
+.ambient-canvas{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+@media (max-width: 620px){
+  .ambient-canvas{ display: none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .ambient-canvas{ display: none; }
+}
+
+/* ==========================================================================
+   WIZARD — ana sayfadaki adım adım akış: tanıtım videosu, sonra Program /
+   Kriterler / Süreç özetleri, en sonda başvuru formu. Aynı token ve
+   bileşenlerden (term-panel, btn, page-header tipografisi) kuruldu, bu
+   yüzden sayfaya yamalı bir widget gibi değil sitenin doğal bir uzantısı
+   gibi oturuyor.
+   ========================================================================== */
+.wizard{ padding: clamp(28px, 4cqw, 40px) 0 clamp(48px, 6cqw, 72px); }
+
+.wizard-progress{ max-width: 640px; margin: 0 auto clamp(32px, 5cqw, 48px); }
+.wizard-progress-track{
+  position: relative;
+  height: 2px;
+  background: var(--color-hairline);
+  border-radius: var(--radius-pill);
+  margin: 0 18px 18px;
+}
+.wizard-progress-fill{
+  position: absolute; left: 0; top: 0; height: 100%;
+  width: 20%;
+  background: var(--gradient-violet);
+  border-radius: var(--radius-pill);
+  transition: width .4s cubic-bezier(.16,.8,.24,1);
+}
+.wizard-steps-list{ display: flex; justify-content: space-between; gap: 4px; }
+.wizard-step-dot{
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex: 1;
+  font-family: var(--font-mono);
+  color: var(--color-iron);
+  cursor: pointer;
+  transition: color .2s ease;
+}
+.wizard-step-dot .dot-num{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--color-hairline);
+  font-size: var(--text-caption);
+  background: var(--color-void);
+  color: var(--color-iron);
+  transition: border-color .2s ease, color .2s ease, background .2s ease;
+}
+.wizard-step-dot .dot-label{ font-size: 11px; letter-spacing: 0.02em; text-align: center; white-space: nowrap; color: inherit; }
+.wizard-step-dot.is-active{ color: var(--color-white); }
+.wizard-step-dot.is-active .dot-num{ border-color: var(--color-violet); color: var(--color-white); background: var(--gradient-violet); }
+.wizard-step-dot.is-done{ color: var(--color-ash); }
+.wizard-step-dot.is-done .dot-num{ border-color: var(--color-violet); color: var(--color-violet-glow); background: transparent; }
+@container phone (max-width: 620px){
+  .wizard-step-dot .dot-label{ display: none; }
+}
+
+.wizard-panel{ display: none; }
+.wizard-panel.is-active{ display: block; animation: wizardFadeIn .45s cubic-bezier(.16,.8,.24,1); }
+@keyframes wizardFadeIn{
+  from{ opacity: 0; transform: translateY(14px); }
+  to{ opacity: 1; transform: none; }
+}
+.wizard-panel-head{ max-width: 640px; margin: 0 auto clamp(24px, 4cqw, 32px); text-align: center; }
+.wizard-panel-head h1, .wizard-panel-head h2{ margin-top: var(--sp-8); color: var(--color-white); }
+.wizard-panel-head p{ margin-top: var(--sp-12); color: var(--color-ash); font-size: var(--text-body-sm); line-height: 1.6; }
+
+.video-frame{
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--color-hairline);
+  background: var(--color-void);
+  box-shadow: 0 30px 70px -25px rgba(0,0,0,0.85), 0 0 60px -30px rgba(146,129,247,0.28);
+}
+.video-frame iframe{ position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.wizard-nav{
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 860px; margin: clamp(32px, 5cqw, 44px) auto 0;
+  gap: var(--sp-16);
+}
+.wizard-step-indicator{ font-family: var(--font-mono); font-size: var(--text-caption); color: var(--color-ash); }
+.wizard-nav .btn[disabled]{ opacity: .35; cursor: not-allowed; }
+.wizard-nav .btn[disabled]:hover{ border-color: var(--color-hairline); }
+/* .btn'nin kendi `display` kuralı, tarayıcının [hidden] için varsayılan
+   display:none kuralıyla aynı özgüllükte (0-1-0) olduğundan ve styles.css
+   sonra yüklendiğinden kazanır — bu yüzden burada açıkça geri kazandırıyoruz,
+   yoksa son adımda "İleri" butonu gizlenmiş görünmez. */
+.wizard-nav .btn[hidden]{ display: none; }
+@container phone (max-width: 480px){
+  .wizard-nav{ flex-wrap: wrap; justify-content: center; }
+  .wizard-step-indicator{ order: 3; flex-basis: 100%; text-align: center; }
+}

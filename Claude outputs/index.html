@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try{if(sessionStorage.getItem('dko_booted')){document.documentElement.classList.add('dko-skip-boot');}}catch(e){}</script>
+<title>DeathKO Prime XL — Yayıncı &amp; İçerik Üretici Programı</title>
+<meta name="description" content="DeathKO'nun yeni PvP sunucusu Prime XL için yayıncı ve içerik üretici başvuru programı.">
+<link rel="icon" href="assets/prime.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@400&amp;family=Space+Grotesk:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas class="ambient-canvas" id="ambientCanvas" aria-hidden="true"></canvas>
+<div class="boot-overlay" id="bootOverlay" aria-hidden="true">
+  <div class="boot-lines" id="bootLines">
+    <div class="boot-line" data-text="deathko_prime_xl.sys başlatılıyor...">&gt; </div>
+    <div class="boot-line" data-text="yayıncı_programı.dll yükleniyor... OK">&gt; </div>
+    <div class="boot-line" data-text="sunucu_bağlantısı doğrulanıyor... OK">&gt; </div>
+    <div class="boot-line" data-text="sahne hazırlanıyor">&gt; </div>
+  </div>
+  <span class="boot-skip">herhangi bir tuşa bas — geç</span>
+</div>
+<div class="site-scope">
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand brand-premium" href="index.html">
+      <img src="assets/deathko-crop.png" alt="DeathKO Prime XL">
+    </a>
+    <nav class="primary-nav" id="primaryNav">
+      <a href="program.html">Program</a>
+      <a href="kriterler.html">Kriterler</a>
+      <a href="surec.html">Süreç</a>
+      <a href="basvuru.html" class="btn btn-primary btn-small nav-cta-mobile">Başvuru Formu</a>
+    </nav>
+    <div class="header-actions">
+      <a href="basvuru.html" class="btn btn-ghost btn-small">Başvuru Formu</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç/kapat" aria-expanded="false" aria-controls="primaryNav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="wizard" id="wizard">
+  <div class="wrap">
+
+    <div class="wizard-progress" role="tablist" aria-label="Başvuru adımları">
+      <div class="wizard-progress-track">
+        <div class="wizard-progress-fill" id="wizardProgressFill"></div>
+      </div>
+      <ol class="wizard-steps-list">
+        <li class="wizard-step-dot" data-step="1"><span class="dot-num">1</span><span class="dot-label">Tanıtım</span></li>
+        <li class="wizard-step-dot" data-step="2"><span class="dot-num">2</span><span class="dot-label">Program</span></li>
+        <li class="wizard-step-dot" data-step="3"><span class="dot-num">3</span><span class="dot-label">Kriterler</span></li>
+        <li class="wizard-step-dot" data-step="4"><span class="dot-num">4</span><span class="dot-label">Süreç</span></li>
+        <li class="wizard-step-dot" data-step="5"><span class="dot-num">5</span><span class="dot-label">Başvuru</span></li>
+      </ol>
+    </div>
+
+    <!-- ADIM 1 — TANITIM VİDEOSU -->
+    <div class="wizard-panel" data-step="1">
+      <div class="wizard-panel-head">
+        <span class="eyebrow">// tanıtım</span>
+        <h1 class="hero-tagline" style="font-size:clamp(1.8rem,4.4cqw,52px);">Sahne senin.</h1>
+        <p>Prime XL'i neden çıkardığımızı, kimi aradığımızı ve bu ortaklıktan ne beklediğimizi kısaca anlatıyoruz. İzledikten sonra programı, kriterleri ve süreci adım adım göreceksin.</p>
+      </div>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/VV_a5-ouqRQ" title="DeathKO Prime XL — Yayıncı Programı Tanıtım Videosu" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <!-- ADIM 2 — PROGRAM -->
+    <div class="wizard-panel" data-step="2" hidden>
+      <div class="wizard-panel-head">
+        <span class="eyebrow">// program</span>
+        <h2>Bu bir reklam değil, bir ortaklık</h2>
+        <p>Prime XL için yayıncı ve içerik üretici arıyoruz: lansmandan önce bir tanıtım videosuyla sahneyi duyuracak, açılıştan sonra ise sahada oynayıp içerik üretecek ve kendi kitlesine taşıyacak isimlerle çalışıyoruz. Sadece "yayın açan" değil, sahneyi büyüten; YouTube, Kick, Instagram veya Facebook'ta aktif ve düzenli bir geçmişi olan isimlerle çalışıyoruz.</p>
+      </div>
+      <div class="term-panel term-panel-premium reveal-stagger is-visible">
+        <div class="term-row">
+          <span class="icon icon-youtube"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M23.498 6.186a3.02 3.02 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.02 3.02 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.02 3.02 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.02 3.02 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814M9.545 15.568V8.432L15.818 12z"/></svg></span>
+          <div class="body"><h3>YouTube</h3></div>
+          <span class="role">içerik arşivi / geniş erişim / Shorts</span>
+        </div>
+        <div class="term-row">
+          <span class="icon icon-kick"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M1.333 0h8v5.333H12V2.667h2.667V0h8v8H20v2.667h-2.667v2.666H20V16h2.667v8h-8v-2.667H12v-2.666H9.333V24h-8Z"/></svg></span>
+          <div class="body"><h3>Kick</h3></div>
+          <span class="role">canlı yayın / topluluk / Clips</span>
+        </div>
+        <div class="term-row">
+          <span class="icon icon-instagram"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M7.03.084c-1.277.06-2.149.264-2.91.563a5.9 5.9 0 0 0-2.124 1.388a5.9 5.9 0 0 0-1.38 2.127C.321 4.926.12 5.8.064 7.076s-.069 1.688-.063 4.947s.021 3.667.083 4.947c.061 1.277.264 2.149.563 2.911c.308.789.72 1.457 1.388 2.123a5.9 5.9 0 0 0 2.129 1.38c.763.295 1.636.496 2.913.552c1.278.056 1.689.069 4.947.063s3.668-.021 4.947-.082c1.28-.06 2.147-.265 2.91-.563a5.9 5.9 0 0 0 2.123-1.388a5.9 5.9 0 0 0 1.38-2.129c.295-.763.496-1.636.551-2.912c.056-1.28.07-1.69.063-4.948c-.006-3.258-.02-3.667-.081-4.947c-.06-1.28-.264-2.148-.564-2.911a5.9 5.9 0 0 0-1.387-2.123a5.9 5.9 0 0 0-2.128-1.38c-.764-.294-1.636-.496-2.914-.55C15.647.009 15.236-.006 11.977 0S8.31.021 7.03.084m.14 21.693c-1.17-.05-1.805-.245-2.228-.408a3.7 3.7 0 0 1-1.382-.895a3.7 3.7 0 0 1-.9-1.378c-.165-.423-.363-1.058-.417-2.228c-.06-1.264-.072-1.644-.08-4.848c-.006-3.204.006-3.583.061-4.848c.05-1.169.246-1.805.408-2.228c.216-.561.477-.96.895-1.382a3.7 3.7 0 0 1 1.379-.9c.423-.165 1.057-.361 2.227-.417c1.265-.06 1.644-.072 4.848-.08c3.203-.006 3.583.006 4.85.062c1.168.05 1.804.244 2.227.408c.56.216.96.475 1.382.895s.681.817.9 1.378c.165.422.362 1.056.417 2.227c.06 1.265.074 1.645.08 4.848c.005 3.203-.006 3.583-.061 4.848c-.051 1.17-.245 1.805-.408 2.23c-.216.56-.477.96-.896 1.38a3.7 3.7 0 0 1-1.378.9c-.422.165-1.058.362-2.226.418c-1.266.06-1.645.072-4.85.079s-3.582-.006-4.848-.06m9.783-16.192a1.44 1.44 0 1 0 1.437-1.442a1.44 1.44 0 0 0-1.437 1.442M5.839 12.012a6.161 6.161 0 1 0 12.323-.024a6.162 6.162 0 0 0-12.323.024M8 12.008A4 4 0 1 1 12.008 16A4 4 0 0 1 8 12.008"/></svg></span>
+          <div class="body"><h3>Instagram</h3></div>
+          <span class="role">kısa içerik / duyuru / Reels</span>
+        </div>
+        <div class="term-row">
+          <span class="icon icon-facebook"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978c.401 0 .955.042 1.468.103a9 9 0 0 1 1.141.195v3.325a9 9 0 0 0-.653-.036a27 27 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.7 1.7 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103l-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647"/></svg></span>
+          <div class="body"><h3>Facebook</h3></div>
+          <span class="role">topluluk / geniş kitle / Reels</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADIM 3 — KRİTERLER -->
+    <div class="wizard-panel" data-step="3" hidden>
+      <div class="wizard-panel-head">
+        <span class="eyebrow">// kriterler</span>
+        <h2>Kimleri arıyoruz</h2>
+        <p>Prime XL'e sadece "yayın açan" değil, sahneyi büyüten kişileri katıyoruz.</p>
+      </div>
+      <div class="term-panel reveal-stagger is-visible">
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg></span>
+          <div class="body">
+            <h3>Üretici + Tanıtımcı</h3>
+            <p>Hem içerik üretmeni hem de bunu aktif şekilde paylaşmanı bekliyoruz; sadece oynamak yeterli olmuyor.</p>
+          </div>
+          <span class="role">01</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
+          <div class="body">
+            <h3>Çoklu platform varlığı</h3>
+            <p>YouTube, Facebook, Instagram veya Kick platformlarından en az birinde aktif ve düzenli bir geçmişe sahip olmanı bekliyoruz.</p>
+          </div>
+          <span class="role">02</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span>
+          <div class="body">
+            <h3>Özenli yayın kalitesi</h3>
+            <p>İzleyiciyi ekranda tutabilecek düzeyde bir ses, görüntü ve sunum kalitesine önem veriyoruz.</p>
+          </div>
+          <span class="role">03</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
+          <div class="body">
+            <h3>Geniş kitleye hitap potansiyeli</h3>
+            <p>Kitle büyüklüğünden çok, büyümeye açık ve özgün bir tarza değer veriyoruz.</p>
+          </div>
+          <span class="role">04</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></span>
+          <div class="body">
+            <h3>Oyuna ve PvP'ye gerçek ilgi</h3>
+            <p>DeathKO'yu ve PvP kültürünü yakından tanımanı ve önemsemeni bekliyoruz.</p>
+          </div>
+          <span class="role">05</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></span>
+          <div class="body">
+            <h3>Süreklilik</h3>
+            <p>Düzenli içerik üretebilecek zamana sahip olmanı bekliyoruz; hedefimiz tek seferlik değil, sürdürülebilir bir ortaklık kurmak.</p>
+          </div>
+          <span class="role">06</span>
+        </div>
+      </div>
+      <div class="note-callout">
+        <strong>// not</strong> — Bu titiz bir değerlendirme sürecidir ve maalesef her başvuruyu kabul edemiyoruz. Amacımız sayıca çok değil, doğru profildeki yayıncı ve içerik üreticilerle uzun soluklu bir iş birliği kurmak.
+      </div>
+    </div>
+
+    <!-- ADIM 4 — SÜREÇ -->
+    <div class="wizard-panel" data-step="4" hidden>
+      <div class="wizard-panel-head">
+        <span class="eyebrow">// süreç</span>
+        <h2>Başvurudan katılıma</h2>
+        <p>Dört adımlık, şeffaf bir değerlendirme süreci.</p>
+      </div>
+      <div class="term-panel term-panel-surec reveal-stagger is-visible">
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></span>
+          <div class="body">
+            <h3>Başvuru</h3>
+            <p>Başvuru formunu eksiksiz doldurmanı rica ediyoruz — doğru bilgiler değerlendirme sürecini hızlandırır.</p>
+          </div>
+          <span class="role">01</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+          <div class="body">
+            <h3>Ön inceleme</h3>
+            <p>Ekibimiz başvurunu ve paylaştığın örnek içeriği inceler.</p>
+          </div>
+          <span class="role">02</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></span>
+          <div class="body">
+            <h3>Görüşme / deneme</h3>
+            <p>Öne çıkan adaylarla kısa bir görüşme yapılır.</p>
+          </div>
+          <span class="role">03</span>
+        </div>
+        <div class="term-row">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></span>
+          <div class="body">
+            <h3>Katılım</h3>
+            <p>Onaylanan yayıncılar DeathKO Prime XL ailesine resmi olarak katılır.</p>
+          </div>
+          <span class="role">04</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADIM 5 — BAŞVURU FORMU -->
+    <div class="wizard-panel" data-step="5" hidden>
+      <div class="wizard-panel-head">
+        <span class="eyebrow">// başvuru</span>
+        <h2>Başvuru formu</h2>
+        <p>Aşağıdaki bilgileri eksiksiz ve doğru şekilde doldur. Verdiğin linkler ve rakamlar değerlendirme sürecinin temelini oluşturuyor — güncel ve gerçek olmasına özen göster.</p>
+      </div>
+
+      <div class="form-shell">
+        <div class="form-status"><span class="dot" aria-hidden="true"></span> başvurular_açık</div>
+
+        <form id="basvuruForm" novalidate>
+
+          <div class="field-group">
+            <div class="field-group-title">// iletişim bilgileri</div>
+            <div class="field-row">
+              <div class="field full">
+                <label for="adSoyad">Ad Soyad *</label>
+                <input type="text" id="adSoyad" name="adSoyad" required autocomplete="name">
+              </div>
+              <div class="field">
+                <label for="discord">Discord Kullanıcı Adı *</label>
+                <input type="text" id="discord" name="discord" placeholder="ornek.kullanici" required>
+              </div>
+              <div class="field">
+                <label for="eposta">E-posta *</label>
+                <input type="email" id="eposta" name="eposta" required autocomplete="email">
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-group-title">// platform &amp; kitle</div>
+            <p class="platform-hint"><strong>En az bir platform linki zorunludur.</strong> Takipçi/abone sayılarını yaklaşık olarak yazabilirsin.</p>
+
+            <div class="platform-row">
+              <span class="platform-tag">YouTube</span>
+              <div class="field"><input type="url" name="ytLink" placeholder="Kanal linki" inputmode="url"></div>
+              <div class="field"><input type="text" name="ytTakipci" placeholder="Abone sayısı (yaklaşık)"></div>
+            </div>
+            <div class="platform-row">
+              <span class="platform-tag">Kick</span>
+              <div class="field"><input type="url" name="kickLink" placeholder="Kanal linki" inputmode="url"></div>
+              <div class="field"><input type="text" name="kickTakipci" placeholder="Takipçi / ort. izleyici"></div>
+            </div>
+            <div class="platform-row">
+              <span class="platform-tag">Instagram</span>
+              <div class="field"><input type="url" name="igLink" placeholder="Profil linki" inputmode="url"></div>
+              <div class="field"><input type="text" name="igTakipci" placeholder="Takipçi sayısı (yaklaşık)"></div>
+            </div>
+            <div class="platform-row">
+              <span class="platform-tag">Facebook</span>
+              <div class="field"><input type="url" name="fbLink" placeholder="Sayfa / profil linki" inputmode="url"></div>
+              <div class="field"><input type="text" name="fbTakipci" placeholder="Takipçi sayısı (yaklaşık)"></div>
+            </div>
+            <div class="platform-row">
+              <span class="platform-tag">Diğer</span>
+              <div class="field"><input type="url" name="digerLink" placeholder="TikTok, X, Twitch vb. (varsa)" inputmode="url"></div>
+              <div class="field"><input type="text" name="digerTakipci" placeholder="Takipçi sayısı (varsa)"></div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-group-title">// içerik</div>
+            <div class="field full">
+              <label for="siklik">Haftalık içerik / yayın sıklığı *</label>
+              <select id="siklik" name="siklik" required>
+                <option value="" disabled selected>Seç...</option>
+                <option value="gunluk">Günlük</option>
+                <option value="haftada-3-4">Haftada 3-4 kez</option>
+                <option value="haftada-1-2">Haftada 1-2 kez</option>
+                <option value="duzensiz">Düzensiz / değişken</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="tanitimPlani">Prime XL'i nasıl tanıtmayı planlıyorsun? *</label>
+              <textarea id="tanitimPlani" name="tanitimPlani" required placeholder="Hangi platformlarda, ne sıklıkla, ne tür içeriklerle tanıtım yapmayı planlıyorsun?"></textarea>
+            </div>
+            <div class="field full">
+              <label for="motivasyon">Neden DeathKO ailesine katılmak istiyorsun? *</label>
+              <textarea id="motivasyon" name="motivasyon" required></textarea>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="checkbox-field">
+              <input type="checkbox" id="kvkk" name="kvkk" required>
+              <label for="kvkk">Paylaştığım bilgilerin DeathKO ekibi tarafından bu başvuruyu değerlendirmek amacıyla işlenmesini kabul ediyorum. *</label>
+            </div>
+            <div class="checkbox-field">
+              <input type="checkbox" id="duyuru" name="duyuru">
+              <label for="duyuru">Prime XL duyurularından ve kampanyalardan haberdar olmak istiyorum.</label>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <span class="fine-print">* ile işaretli alanlar zorunludur. Gönderdiğin bilgiler yalnızca başvuru değerlendirmesi için kullanılır.</span>
+            <button type="submit" class="btn btn-primary btn-large">Başvurumu Gönder</button>
+          </div>
+        </form>
+
+        <div class="form-success" id="formSuccess">
+          <img class="crest-small" src="assets/prime.png" alt="Prime XL">
+          <h3>Başvurun alındı</h3>
+          <p>Teşekkürler! Ekibimiz başvurunu inceleyip Discord veya e-posta üzerinden seninle iletişime geçecek. İlgin için şimdiden teşekkürler.</p>
+          <button class="btn btn-ghost" id="formResetBtn" type="button">Yeni başvuru gönder</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-nav">
+      <button type="button" class="btn btn-ghost" id="wizardPrevBtn">‹ Geri</button>
+      <span class="wizard-step-indicator" id="wizardStepIndicator"></span>
+      <button type="button" class="btn btn-primary" id="wizardNextBtn">İleri ›</button>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer reveal">
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="program.html">Program</a>
+      <a href="kriterler.html">Kriterler</a>
+      <a href="surec.html">Süreç</a>
+      <a href="basvuru.html">Başvuru Formu</a>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></a>
+      <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a>
+      <a href="#" aria-label="Kick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></svg></a>
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+      <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 DeathKO — Prime XL Yayıncı Programı</span>
+    </div>
+  </div>
+</footer>
+
+<script src="site.js"></script>
+<script src="fx.js"></script>
+<script src="wizard.js"></script>
+</div>
+</body>
+</html>
