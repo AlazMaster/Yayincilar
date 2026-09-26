@@ -43,11 +43,6 @@
       "platform": "Kick"
     },
     {
-      "name": "HakimC4N",
-      "url": "https://kick.com/hakimc4n",
-      "platform": "Kick"
-    },
-    {
       "name": "SexMachinee",
       "url": "https://kick.com/seximachinee",
       "platform": "Kick"
@@ -120,6 +115,11 @@
     {
       "name": "w4vn1 Kick",
       "url": "https://kick.com/4vn1",
+      "platform": "Kick"
+    },
+    {
+      "name": "QuietAlpha",
+      "url": "https://kick.com/quietalpha",
       "platform": "Kick"
     }
   ],
