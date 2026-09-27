@@ -136,6 +136,11 @@
       "name": "YESIL",
       "url": "https://kick.com/metehan-kervancioglu",
       "platform": "Kick"
+    },
+    {
+      "name": "MesutAktas",
+      "url": "https://kick.com/mesutaktass",
+      "platform": "Kick"
     }
   ],
   "icerik": [
@@ -157,11 +162,6 @@
     {
       "name": "CemoNight",
       "url": "https://www.youtube.com/@cemonight",
-      "platform": "YouTube"
-    },
-    {
-      "name": "AthloreX",
-      "url": "https://www.youtube.com/@AthloreX",
       "platform": "YouTube"
     }
   ]
