@@ -74,7 +74,7 @@
   "https://www.youtube.com/@PAKERONLINE": {
     "name": "PAKERONLINE",
     "live": false,
-    "newVideo": false,
+    "newVideo": true,
     "channelId": "UC2x37_5drQKSA4EgK4JVTPQ",
     "videoId": "4ObpoHPMxbY",
     "videoTitle": "Özlenen eski Knight Online mı yoksa eski günler mi? #knightonline",
