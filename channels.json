@@ -33,11 +33,6 @@
   ],
   "kick": [
     {
-      "name": "ZarkOFFF",
-      "url": "https://kick.com/zarkofff",
-      "platform": "Kick"
-    },
-    {
       "name": "FlyingDagger",
       "url": "https://kick.com/flyingdagger",
       "platform": "Kick"
@@ -125,11 +120,6 @@
     {
       "name": "YESIL",
       "url": "https://kick.com/metehan-kervancioglu",
-      "platform": "Kick"
-    },
-    {
-      "name": "MesutAktas",
-      "url": "https://kick.com/mesutaktass",
       "platform": "Kick"
     }
   ],
